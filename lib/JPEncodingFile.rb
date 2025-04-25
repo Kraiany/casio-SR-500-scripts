@@ -2,22 +2,17 @@ require 'fileutils'
 require 'open3'
 require 'pry'
 
-# A class for decoding Shift-JIS files into UTF-8, using uchardet for charset detection.
+# A class for opening Shift-JIS files as UTF-8. Uses uchardet binary
+# for charset detection.
 class JPEncodingFile < File
   # The path to the input file.
   attr_accessor :path
   # The encoding of the file (detected by uchardet).
   attr_reader :encoding
-  # The directory where converted files will be saved if not converting in place.
-  # attr_accessor :output_dir
-  # # A boolean indicating whether to convert the file in place (overwriting the original).
-  # attr_accessor :inplace
 
   # Initializes a new JPEncodingFile object.
   #
   # @param path [String] The path to the input file.
-  # @param inplace [Boolean] Whether to convert the file in place. Default is false.
-  # @param output_dir [String] The directory for converted files if not converting in place.
   def initialize(path)
     @path = path
     @encoding = nil
