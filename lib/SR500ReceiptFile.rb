@@ -55,23 +55,26 @@ class SR500RecipeFile < JPEncodingFile
     @lines = super
   end
 
+  # Start fresh
+  def new_order
+    return { items: [] }
+  end
 
   def parse
     orders = []
-    order = {  }
-    order[:items] = []
+    order = new_order
 
     @lines.each do |l|
       l.strip!
 
       if l.match Reset
         # debugger
-        order = {  }
-        order[:items] = []
+        order = new_order
         next
       end
 
       if l.match /^[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/
+        order = new_order
         order[:timestamp] = Time.new(l+":00")
         next
       end
@@ -84,9 +87,11 @@ class SR500RecipeFile < JPEncodingFile
       if l.match /^(.+)\s+([\d\.]+)%\s+#{currency}([\d,]+)$/
         key = $1.strip
         percent = $2.strip
-        value = $3.strip.gsub(',','')
+        value_str = $3.strip
+        value = $3.strip.gsub(',','').to_i
 
         order[:tax] = { percent:  percent, amount: value}
+        order[:taxableamount] = "(#{percent}%) #{value_str}"
         next
       end
 
@@ -96,9 +101,10 @@ class SR500RecipeFile < JPEncodingFile
         value = $2.strip.gsub(',','')
 
         case key
-        when TaxableAmount
-          order[:taxableamount] = value.to_i
-          next
+        # when TaxableAmount
+        #   debugger
+        #   order[:taxableamount] = value.to_i
+        #   next
         when TaxIncluded
           order[:taxincluded] = value.to_i
           next
@@ -110,6 +116,10 @@ class SR500RecipeFile < JPEncodingFile
           next
         when AmountReturned
           order[:amountreturned] = value.to_i
+          orders.push SR500Order.new(order) #  End of receipt
+          next
+        when Cash
+          order[:cash] = value.to_i
           orders.push SR500Order.new(order) #  End of receipt
           next
         else

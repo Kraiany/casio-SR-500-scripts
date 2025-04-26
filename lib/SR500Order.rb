@@ -16,6 +16,7 @@ class SR500Order
   attr_accessor :items
   attr_accessor :tax_percent
   attr_accessor :tax_amount
+  attr_accessor :cash
 
   def initialize(order)
     return unless order[:timestamp]
@@ -32,6 +33,7 @@ class SR500Order
     @totalamountdue = order.delete :totalamountdue
     @amountreceived = order.delete :amountreceived
     @amountreturned = order.delete :amountreturned
+    @cash           = order.delete :cash
 
     @items = []
     order[:items].each do |item|
@@ -45,14 +47,20 @@ class SR500Order
   end
 
   def self.csv_header
-    [:timestamp, :sequence, :items, :tax_percent, :tax_amount,
-     :taxableamount, :taxincluded, :amountreceived,
-     :amountreturned ].to_csv
+
+    [ HEADERS[:timestamp],      HEADERS[:sequence],
+      HEADERS[:items],          HEADERS[:tax_percent],
+      HEADERS[:tax_amount],     HEADERS[:taxableamount],
+      HEADERS[:taxincluded],
+      HEADERS[:amountreceived],
+      HEADERS[:cash],
+      HEADERS[:amountreturned]
+    ].to_csv
   end
 
   def to_csv(header: false)
     csv = ''
-    # debugger
+    # # debugger
     csv = SR500Order.csv_header if header
 
     items_str = items.map(&:to_s).join(', ')
@@ -64,6 +72,7 @@ class SR500Order
             taxableamount,
             taxincluded,
             amountreceived,
+            cash,
             amountreturned
            ].to_csv
   end
