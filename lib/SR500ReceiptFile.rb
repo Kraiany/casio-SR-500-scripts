@@ -29,19 +29,13 @@
 
 require 'jpencodingfile'
 require 'sr500order'
+require 'sr500constants'
 require 'debug'
 
 # A class for reading recepit files of Casi SR-500 POS register.
 class SR500RecipeFile < JPEncodingFile
 
-  # Constants
-  TaxableAmount  = "対象計"
-  TaxIncluded    = "内税"
-  TotalAmountDue = "合  計"
-  AmountReceived = "お預り"
-  AmountReturned = "お  釣"     # change - last line in sinle receipt
-  Reset          = "＃／替      ････････････" # This is when POS is turned OFF (?? DK)
-
+  include SR500Constants
 
   attr_accessor :csv
   attr_accessor :lines

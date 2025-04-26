@@ -1,7 +1,11 @@
 require 'debug'
 require 'csv'
+require 'sr500constants'
 
 class SR500Order
+
+  include SR500Constants
+
   attr_accessor :timestamp
   attr_accessor :sequence
   attr_accessor :taxableamount
