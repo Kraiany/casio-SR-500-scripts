@@ -29,7 +29,7 @@
 
 require 'jpencodingfile'
 require 'sr500order'
-require 'pry'
+require 'debug'
 
 # A class for reading recepit files of Casi SR-500 POS register.
 class SR500RecipeFile < JPEncodingFile
@@ -40,11 +40,13 @@ class SR500RecipeFile < JPEncodingFile
   TotalAmountDue = "合  計"
   AmountReceived = "お預り"
   AmountReturned = "お  釣" # change
+  Reset          = "＃／替      ････････････"
 
 
   attr_accessor :csv
   attr_accessor :lines
   attr_accessor :currency
+  attr_accessor :orders
 
   def initialize(path, currency = '￥')
     @path     = path
@@ -59,6 +61,7 @@ class SR500RecipeFile < JPEncodingFile
     @lines = super
   end
 
+
   def parse
     orders = []
     order = {  }
@@ -66,6 +69,13 @@ class SR500RecipeFile < JPEncodingFile
 
     @lines.each do |l|
       l.strip!
+
+      if l.match Reset
+        # debugger
+        order = {  }
+        order[:items] = []
+        next
+      end
 
       if l.match /^[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/
         order[:timestamp] = Time.new(l+":00")
@@ -80,7 +90,7 @@ class SR500RecipeFile < JPEncodingFile
       if l.match /^(.+)\s+([\d\.]+)%\s+#{currency}([\d,]+)$/
         key = $1.strip
         percent = $2.strip
-        value = $3.strip
+        value = $3.strip.gsub(',','')
 
         order[:tax] = { percent:  percent, amount: value}
         next
@@ -89,23 +99,23 @@ class SR500RecipeFile < JPEncodingFile
 
       if /^(.+)\s+#{currency}([\d,]+)$/.match(l)
         key = $1.strip
-        value = $2.strip
+        value = $2.strip.gsub(',','')
 
         case key
         when TaxableAmount
-          order[:taxableamount] = value.to_f
+          order[:taxableamount] = value.to_i
           next
         when TaxIncluded
-          order[:taxincluded] = value.to_f
+          order[:taxincluded] = value.to_i
           next
         when TotalAmountDue
-          order[:totalamountdue] = value.to_f
+          order[:totalamountdue] = value.to_i
           next
         when AmountReceived
-          order[:amountreceived] = value.to_f
+          order[:amountreceived] = value.to_i
           next
         when AmountReturned
-          order[:amountreturned] = value.to_f
+          order[:amountreturned] = value.to_i
           orders.push SR500Order.new(order) #  End of receipt
           next
         else
@@ -114,8 +124,15 @@ class SR500RecipeFile < JPEncodingFile
         end
       end
     end
-    orders.push SR500Order.new(order)
-    # binding.pry
+    orders.push SR500Order.new(order) if order[:timestamp]
+    @orders = orders
   end
+
+
+  def to_csv(header: true)
+    csv = header ? SR500Order.csv_header : ''
+    csv << orders.map(&:to_csv).join
+  end
+
 
 end

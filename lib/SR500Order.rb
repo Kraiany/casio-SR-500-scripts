@@ -1,4 +1,5 @@
-require 'pry'
+require 'debug'
+require 'csv'
 
 class SR500Order
   attr_accessor :timestamp
@@ -9,6 +10,8 @@ class SR500Order
   attr_accessor :amountreceived
   attr_accessor :amountreturned
   attr_accessor :items
+  attr_accessor :tax_percent
+  attr_accessor :tax_amount
 
   def initialize(order)
     return unless order[:timestamp]
@@ -35,7 +38,30 @@ class SR500Order
                     @sequence
                   )
     end
+  end
 
+  def self.csv_header
+    [:timestamp, :sequence, :items, :tax_percent, :tax_amount,
+     :taxableamount, :taxincluded, :amountreceived,
+     :amountreturned ].to_csv
+  end
+
+  def to_csv(header: false)
+    csv = ''
+    # debugger
+    csv = SR500Order.csv_header if header
+
+    items_str = items.map(&:to_s).join(', ')
+    csv << [timestamp,
+            sequence,
+            items_str,
+            tax_percent,
+            tax_amount,
+            taxableamount,
+            taxincluded,
+            amountreceived,
+            amountreturned
+           ].to_csv
   end
 end
 
