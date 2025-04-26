@@ -1,4 +1,4 @@
-# Format
+# Example gFormat
 # -----------
 # 対象計      10.0%   ￥550 - TaxAmmount
 # 内税                 ￥50
@@ -39,8 +39,8 @@ class SR500RecipeFile < JPEncodingFile
   TaxIncluded    = "内税"
   TotalAmountDue = "合  計"
   AmountReceived = "お預り"
-  AmountReturned = "お  釣" # change
-  Reset          = "＃／替      ････････････"
+  AmountReturned = "お  釣"     # change - last line in sinle receipt
+  Reset          = "＃／替      ････････････" # This is when POS is turned OFF (?? DK)
 
 
   attr_accessor :csv
