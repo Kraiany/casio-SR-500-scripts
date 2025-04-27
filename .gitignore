@@ -2,3 +2,4 @@ data
 **/*test*.txt
 *test_files
 **/*.csv
+load-receipts/src*
