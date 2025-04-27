@@ -6,17 +6,12 @@ class SR500Order
 
   include SR500Constants
 
-  attr_accessor :timestamp
-  attr_accessor :sequence
-  attr_accessor :taxableamount
-  attr_accessor :taxincluded
-  attr_accessor :totalamountdue
-  attr_accessor :amountreceived
-  attr_accessor :amountreturned
-  attr_accessor :items
-  attr_accessor :tax_percent
-  attr_accessor :tax_amount
-  attr_accessor :cash
+   [ :timestamp, :sequence, :taxableamount, :taxincluded,
+     :totalamountdue, :amountreceived, :amountreturned, :items,
+     :tax_percent, :tax_amount, :cash
+   ].each do |attr|
+     attr_accessor attr
+   end
 
   def initialize(order)
     return unless order[:timestamp]
