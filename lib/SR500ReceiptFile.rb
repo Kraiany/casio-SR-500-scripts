@@ -63,9 +63,16 @@ class SR500RecipeFile < JPEncodingFile
   def parse
     orders = []
     order = new_order
+    partial_line = nil
 
     @lines.each do |l|
       l.strip!
+
+      if partial_line
+        debugger
+        l = "#{partial_line}    #{l}"
+        partial_line = nil
+      end
 
       if l.match Reset
         # debugger
@@ -84,17 +91,35 @@ class SR500RecipeFile < JPEncodingFile
         next
       end
 
-      if l.match /^(.+)\s+([\d\.]+)%\s+#{currency}([\d,]+)$/
-        key = $1.strip
-        percent = $2.strip
-        value_str = $3.strip
-        value = $3.strip.gsub(',','').to_i
+      #
+      # 対象計      10.0%
+      #            ￥15,510
+      if l.match /^(.+)\s+([\d\.]+)%\s*$/
+        partial_line = l
+        next
+      end
+
+
+      # 対象計      10.0% ￥1,100
+      if l.match /^#{TaxableAmount}\s+([\d\.]+)%\s+#{currency}([\d,]+)$/
+        # key = $1.strip
+        percent = $1.strip
+        value_str = $2.strip
+        value = $2.strip.gsub(',','').to_i
 
         order[:tax] = { percent:  percent, amount: value}
         order[:taxableamount] = "(#{percent}%) #{value_str}"
         next
       end
 
+      if l.match /^#{Cancellation}\s+-(\d+)$/
+        if order[:items].last[:price] == $1
+          order[:items].pop
+        else
+          puts "Order #{order[:items].last.to_s} differs from refund: #{$1}"
+        end
+        next
+      end
 
       if /^(.+)\s+#{currency}([\d,]+)$/.match(l)
         key = $1.strip

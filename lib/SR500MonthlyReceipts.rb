@@ -7,7 +7,7 @@ class SR500MonthlyReceipts
 
   # Take multiple file paths
   def initialize(paths)
-    @paths = paths
+    @paths = paths.sort
     @receipts = []
     paths.each do |path|
       @receipts.push SR500RecipeFile.new(path)
