@@ -15,6 +15,7 @@ class SR500Order
 
   def initialize(order)
     return unless order[:timestamp]
+    return if order[:items].size == 0
 
     @timestamp      = order.delete :timestamp
     @sequence       = order.delete :number
@@ -54,6 +55,7 @@ class SR500Order
   end
 
   def to_csv(header: false)
+    return unless timestamp
     csv = header ? SR500Order.csv_header : ''
 
     items_str = items.map(&:to_s).join(', ')
