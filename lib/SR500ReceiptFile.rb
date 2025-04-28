@@ -137,6 +137,6 @@ class SR500RecipeFile < JPEncodingFile
     csv = header ? SR500Order.csv_header : ''
     csv << orders.map(&:to_csv).join
   end
-
+  alias to_s to_csv
 
 end

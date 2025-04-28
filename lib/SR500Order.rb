@@ -54,9 +54,7 @@ class SR500Order
   end
 
   def to_csv(header: false)
-    csv = ''
-    # # debugger
-    csv = SR500Order.csv_header if header
+    csv = header ? SR500Order.csv_header : ''
 
     items_str = items.map(&:to_s).join(', ')
     csv << [timestamp,
@@ -71,6 +69,8 @@ class SR500Order
             amountreturned
            ].to_csv
   end
+
+  alias to_s to_csv
 end
 
 class SR500OrderItem
