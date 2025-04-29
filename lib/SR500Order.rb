@@ -16,9 +16,9 @@ class Items
  end
 
  def self.to_csv
-   csv = [:timestamp, :sequence, :product, :price].map(&:to_s).map(&:capitalize).to_csv
+   csv = [:key, :timestamp, :sequence, :product, :price].map(&:to_s).map(&:capitalize).to_csv
    @@items.each do |item|
-     csv << [item.timestamp, item.order_sequence, item.product, item.price].to_csv
+     csv << [item.key, item.timestamp, item.order_sequence, item.product, item.price].to_csv
    end
    csv
  end
@@ -30,7 +30,7 @@ class SR500Order
 
   include SR500Constants
 
-   [ :timestamp, :date, :time, :hour, :sequence, :taxableamount, :taxincluded,
+   [ :key, :timestamp, :date, :time, :hour, :sequence, :taxableamount, :taxincluded,
      :totalamountdue, :amountreceived, :amountreturned, :items,
      :tax_percent, :tax_amount, :cash
    ].each do |attr|
@@ -47,6 +47,8 @@ class SR500Order
     @hour           = order.delete :hour
     @sequence       = order.delete :number
 
+    @key            = "#{order[:epoch].to_i}-#{sprintf("%06d",@sequence)}"
+
     @tax_percent    = order[:tax][:percent]
     @tax_amount     = order[:tax][:amount]
     order.delete :tax
@@ -62,6 +64,7 @@ class SR500Order
     order[:items].each do |item|
 
       i = SR500OrderItem.new(
+        @key,
         item[:product],
         item[:price],
         @timestamp,
@@ -75,7 +78,7 @@ class SR500Order
 
   def self.csv_header
 
-    [ HEADERS[:timestamp],
+    [ "key", HEADERS[:timestamp],
       HEADERS[:date], HEADERS[:time], HEADERS[:hour],
       HEADERS[:sequence],
       HEADERS[:items],          HEADERS[:tax_percent],
@@ -92,7 +95,8 @@ class SR500Order
     csv = header ? SR500Order.csv_header : ''
 
     items_str = items.map(&:to_s).join(', ')
-    csv << [timestamp,
+    csv << [key,
+            timestamp,
             date,
             time,
             hour,
@@ -112,16 +116,17 @@ class SR500Order
 end
 
 class SR500OrderItem
+  attr_accessor :key
   attr_accessor :product
   attr_accessor :price
   attr_accessor :timestamp
   attr_accessor :order_sequence
 
-  def initialize(product,price,timestamp,sequence)
+  def initialize(key,product,price,timestamp,sequence)
+    @key            = key
     @product        = product
     @price          = price
     @timestamp      = timestamp
-    @time
     @order_sequence = sequence
   end
 

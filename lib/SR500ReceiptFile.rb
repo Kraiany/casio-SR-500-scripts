@@ -81,6 +81,7 @@ class SR500RecipeFile < JPEncodingFile
         order[:date]      = time.strftime("%Y-%m-%d")
         order[:time]      = time.strftime("%H:%M")
         order[:hour]      = time.strftime("%H")
+        order[:epoch]    = time.to_i
         next
       end
 
