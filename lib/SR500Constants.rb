@@ -13,6 +13,9 @@ module SR500Constants
   # Column headers for generated CSV files
   HEADERS = {
     timestamp:      'Timestamp',
+    date:           'Date',
+    time:           'Time',
+    hour:            'Hour',
     sequence:       'Order #',
     items:          'PLU',
     taxableamount:  'TaxableAmount /対象計',

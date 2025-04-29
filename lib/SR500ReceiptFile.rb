@@ -75,7 +75,12 @@ class SR500RecipeFile < JPEncodingFile
 
       if l.match /^[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/ # Timestamp
         order = new_order
-        order[:timestamp] = Time.new(l+":00")
+        time = Time.new(l+":00")
+        # debugger
+        order[:timestamp] = time.strftime("%Y-%m-%d %H:%M")
+        order[:date]      = time.strftime("%Y-%m-%d")
+        order[:time]      = time.strftime("%H:%M")
+        order[:hour]      = time.strftime("%H")
         next
       end
 

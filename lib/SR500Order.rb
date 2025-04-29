@@ -30,7 +30,7 @@ class SR500Order
 
   include SR500Constants
 
-   [ :timestamp, :sequence, :taxableamount, :taxincluded,
+   [ :timestamp, :date, :time, :hour, :sequence, :taxableamount, :taxincluded,
      :totalamountdue, :amountreceived, :amountreturned, :items,
      :tax_percent, :tax_amount, :cash
    ].each do |attr|
@@ -42,6 +42,9 @@ class SR500Order
     return if order[:items].size == 0
 
     @timestamp      = order.delete :timestamp
+    @time           = order.delete :time
+    @date           = order.delete :date
+    @hour           = order.delete :hour
     @sequence       = order.delete :number
 
     @tax_percent    = order[:tax][:percent]
@@ -62,7 +65,7 @@ class SR500Order
         item[:product],
         item[:price],
         @timestamp,
-        @sequence
+        @sequence,
       )
 
       @items << i
@@ -72,7 +75,9 @@ class SR500Order
 
   def self.csv_header
 
-    [ HEADERS[:timestamp],      HEADERS[:sequence],
+    [ HEADERS[:timestamp],
+      HEADERS[:date], HEADERS[:time], HEADERS[:hour],
+      HEADERS[:sequence],
       HEADERS[:items],          HEADERS[:tax_percent],
       HEADERS[:tax_amount],     HEADERS[:taxableamount],
       HEADERS[:taxincluded],
@@ -88,6 +93,9 @@ class SR500Order
 
     items_str = items.map(&:to_s).join(', ')
     csv << [timestamp,
+            date,
+            time,
+            hour,
             sequence,
             items_str,
             tax_percent,
@@ -113,6 +121,7 @@ class SR500OrderItem
     @product        = product
     @price          = price
     @timestamp      = timestamp
+    @time
     @order_sequence = sequence
   end
 
