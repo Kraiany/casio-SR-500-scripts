@@ -51,4 +51,8 @@ File.open(output_file,"w:UTF-8") do |f|
   f.write csv
 end
 
+File.open(output_file + "items.csv","w:UTF-8") do |f|
+  f.write Items.to_csv
+end
+
 puts "Звіти об'єднано у файл: #{output_file}"

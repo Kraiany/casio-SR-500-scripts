@@ -2,7 +2,31 @@ require 'debug'
 require 'csv'
 require 'sr500constants'
 
+# Class Items is only used for collecting all items into class
+# variable @@items and generating CSV for all items.
+class Items
+  @@items = []
+
+  def self.items
+    @@items
+  end
+
+ def items
+    self.class.items
+ end
+
+ def self.to_csv
+   csv = [:timestamp, :sequence, :product, :price].map(&:to_s).map(&:capitalize).to_csv
+   @@items.each do |item|
+     csv << [item.timestamp, item.order_sequence, item.product, item.price].to_csv
+   end
+   csv
+ end
+end
+
+# Single receipt is parsed into single instance of class SR500Order.
 class SR500Order
+
 
   include SR500Constants
 
@@ -33,12 +57,16 @@ class SR500Order
 
     @items = []
     order[:items].each do |item|
-      @items.push SR500OrderItem.new(
-                    item[:product],
-                    item[:price],
-                    @timestamp,
-                    @sequence
-                  )
+
+      i = SR500OrderItem.new(
+        item[:product],
+        item[:price],
+        @timestamp,
+        @sequence
+      )
+
+      @items << i
+      Items.items << i
     end
   end
 
