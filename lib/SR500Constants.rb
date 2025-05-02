@@ -28,3 +28,5 @@ module SR500Constants
     cancellation:   'Cancel /訂正'             # 訂正 (ていせい - teisei)
   }
 end
+
+# 領収書 - (りょうしゅうしょ - ryōshūsho) -- receipt
