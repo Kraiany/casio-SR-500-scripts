@@ -61,6 +61,7 @@ class SR500RecipeFile < JPEncodingFile
     partial_line = nil
 
     @lines.each do |l|
+      # debugger if l.match(/0009/)
       l.strip!
 
       if partial_line
@@ -109,8 +110,8 @@ class SR500RecipeFile < JPEncodingFile
         next
       end
 
-      if l.match /^#{Cancellation}\s+-(\d+)$/
-        if order[:items].last[:price] == $1
+      if l.match /^#{Cancellation}\s+-([\d,]+)$/
+        if order[:items].last[:price] == $1.tr(',','')
           order[:items].pop
         else
           puts "Order #{order[:items].last.to_s} differs from refund: #{$1}"

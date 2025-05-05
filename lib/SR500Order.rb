@@ -48,7 +48,7 @@ class SR500Order
     @sequence       = order.delete :number
 
     @key            = "#{order[:epoch].to_i}-#{sprintf("%06d",@sequence)}"
-
+    #debugger if order[:tax].nil?
     @tax_percent    = order[:tax][:percent]
     @tax_amount     = order[:tax][:amount]
     order.delete :tax
