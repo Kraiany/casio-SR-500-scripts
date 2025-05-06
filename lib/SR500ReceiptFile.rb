@@ -61,7 +61,6 @@ class SR500RecipeFile < JPEncodingFile
     partial_line = nil
 
     @lines.each do |l|
-      # debugger if l.match(/0009/)
       l.strip!
 
       if partial_line
@@ -74,7 +73,35 @@ class SR500RecipeFile < JPEncodingFile
         next
       end
 
+      if l.match OrderCancellation
+        order = new_order
+        next
+      end
+
+      if l.match Receipt
+        order = new_order
+        next
+      end
+
+      # Settlement or X/Z report line
+      # 精算 2025-03-23 17:55
+      # ----------------------
+      if l.match /^#{Settlement}\s+[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/
+        orders.push SR500Order.new(order) if order[:timestamp]
+        order = new_order
+        next
+      end
+
+      if l.match /^-{20,25}/
+        orders.push SR500Order.new(order) if order[:timestamp]
+        order = new_order
+        next
+      end
+
+      # Timestamp
+      # ----------------------
       if l.match /^[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/ # Timestamp
+        orders.push SR500Order.new(order) if order[:timestamp]
         order = new_order
         time = Time.new(l+":00")
         # debugger
@@ -82,7 +109,7 @@ class SR500RecipeFile < JPEncodingFile
         order[:date]      = time.strftime("%Y-%m-%d")
         order[:time]      = time.strftime("%H:%M")
         order[:hour]      = time.strftime("%H")
-        order[:epoch]    = time.to_i
+        order[:epoch]     = time.to_i
         next
       end
 
@@ -91,13 +118,16 @@ class SR500RecipeFile < JPEncodingFile
         next
       end
 
+      # When percentage line is split into 2 lines
       # 対象計      10.0%
       #            ￥15,510
       if l.match /^(.+)\s+([\d\.]+)%\s*$/
         partial_line = l
-        next
+       next
       end
 
+      # Single line percentage, or after two consequtive lines joined
+      #
       # 対象計      10.0% ￥1,100
       if l.match /^#{TaxableAmount}\s+([\d\.]+)%\s+#{currency}([\d,]+)$/
         # key = $1.strip
@@ -110,18 +140,25 @@ class SR500RecipeFile < JPEncodingFile
         next
       end
 
+      # 訂正
       if l.match /^#{Cancellation}\s+-([\d,]+)$/
-        if order[:items].last[:price] == $1.tr(',','')
+        refund = $1.tr(',','').to_i
+        if order[:items].last[:price] == refund
           order[:items].pop
+        elsif order[:cash] == refund
+          cash = order[:cash]
+          order[:cash] = nil
         else
-          puts "Order #{order[:items].last.to_s} differs from refund: #{$1}"
+          debugger
+          STDOUT.puts "Refund #{refund} differs from both last item price #{order[:items].last.to_s} and cash #{cash}"
+          pp self
         end
         next
       end
 
       if /^(.+)\s+#{currency}([\d,]+)$/.match(l)
         key = $1.strip
-        value = $2.strip.gsub(',','')
+        value = $2.strip.gsub(',','').to_i
 
         case key
         when TaxIncluded
@@ -135,11 +172,11 @@ class SR500RecipeFile < JPEncodingFile
           next
         when AmountReturned
           order[:amountreturned] = value.to_i
-          orders.push SR500Order.new(order) #  End of receipt
+          # orders.push SR500Order.new(order) #  End of receipt
           next
         when Cash
           order[:cash] = value.to_i
-          orders.push SR500Order.new(order) #  End of receipt
+          # orders.push SR500Order.new(order) #  End of receipt
           next
         else
           order[:items].push({ product: key, price: value })
