@@ -1,14 +1,18 @@
 module SR500Constants
 
   # Constants used for parsing receipt summary lines.
-  TaxableAmount  = '対象計'
-  TaxIncluded    = '内税'
-  TotalAmountDue = '合  計'
-  AmountReceived = 'お預り'
-  Cancellation   = '訂正'
-  AmountReturned = 'お  釣'     # Change or Cash - last line in sinle receipt
-  Cash           = '現金'
-  Reset          = '＃／替      ････････････' # Is this always line when POS is turned OFF (?? @dmytro)
+  TaxableAmount     = '対象計'
+  TaxIncluded       = '内税'
+  TotalAmountDue    = '合  計'
+  AmountReceived    = 'お預り'  # お預り (おあずかり)
+  Cancellation      = '訂正'
+  AmountReturned    = 'お  釣'     # Change or Cash - last line in sinle receipt
+  Cash              = '現金'       # 現金 (げんきん - genkin) -- NOT always End of receipt
+  Reset             = '＃／替      ････････････' # Line when POS is turned OFF/ON (?? @dmytro)
+  OrderCancellation = '取引中止' # 取引中止 (とりひきちゅうし - torihiki chūshi)
+  Settlement        = '精算' # 精算 (せいさん - seisan)
+  Receipt           = '領収書'  # Ryōshū-sho
+
 
   # Column headers for generated CSV files
   HEADERS = {
