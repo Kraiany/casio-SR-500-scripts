@@ -1,2 +1,77 @@
-# casio-SR-500-scripts
-Various scripts for Casio SR-500 POS register
+# Casio SR-500 Scripts
+
+A collection of Ruby scripts and utilities for working with Casio SR-500 POS register data. This project provides tools for reading, parsing, and analyzing receipt data from Casio SR-500 POS registers.
+
+## Features
+
+- Read and parse Casio SR-500 receipt files
+- Handle Japanese character encoding (SJIS/UTF-8)
+- Generate monthly reports and analytics
+- Export data to CSV format
+- Database integration for data storage and querying
+
+## Project Structure
+
+```
+.
+├── lib/                    # Core library files
+│   ├── SR500ReceiptFile.rb # Main receipt file parser
+│   ├── SR500Constants.rb   # Constants and configurations
+│   ├── SR500Order.rb       # Order data structure
+│   └── JPEncodingFile.rb   # Japanese encoding utilities
+├── load-receipts/          # Data processing scripts
+│   ├── SQL/               # SQL scripts and queries
+│   └── generate_monthly_orders_report.rb
+```
+
+## Requirements
+
+- Ruby (see `.ruby-version` for specific version)
+- Required gems (see `Gemfile` for dependencies)
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/casio-SR-500-scripts.git
+   cd casio-SR-500-scripts
+   ```
+
+2. Install dependencies:
+   ```bash
+   bundle install
+   ```
+
+## Usage
+
+### Reading Receipt Files
+
+```ruby
+require_relative 'lib/SR500ReceiptFile'
+
+# Read a receipt file
+receipt = SR500ReceiptFile.new('path/to/receipt.dat')
+receipt.parse
+```
+
+### Generating Monthly Reports
+
+```ruby
+# From the load-receipts directory
+ruby generate_monthly_orders_report.rb
+```
+
+## Data Format
+
+The project works with Casio SR-500 POS register data files, which typically contain:
+- Transaction records
+- Order details
+- Japanese text (encoded in SJIS)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the terms of the included LICENSE file.
