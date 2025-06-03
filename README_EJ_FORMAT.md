@@ -298,7 +298,8 @@ SDｶｰﾄﾞ保存      正常終了
 
 - Files are named in the format `EJYYMMDD.TXT` (e.g., `EJ250405.TXT` for April 5, 2025)
 - Each receipt is separated by timestamps
-- UTF-8 encoding with Japanese characters
+- Original files are in Shift-JIS encoding with Japanese characters
+  - Files are automatically converted to UTF-8 by the JPEncodingFile class
 - Line endings: CRLF
 - Currency symbol: ￥ (Japanese Yen)
 
@@ -311,6 +312,7 @@ SDｶｰﾄﾞ保存      正常終了
    - May appear as a single line or split across multiple lines
    - When split, the taxable amount appears on a separate line
    - The tax amount is shown on a single line
+   - Tax rates can be either 10% (dine-in) or 8% (takeout)
 5. Payment Information: Method and amount
 6. Change: Amount returned
 7. Returns/Corrections:
@@ -321,7 +323,9 @@ SDｶｰﾄﾞ保存      正常終了
 ## Notes
 
 - All monetary values are in Japanese Yen (￥)
-- Tax rate is consistently 10%
+- Tax rates:
+  - 10% for dine-in items (most common in current data)
+  - 8% for takeout items (not present in current data but supported by the system)
 - Receipt numbers are sequential within each day
 - Some receipts may include additional information like official receipt numbers
 - End of day reports include summary statistics and system status messages
