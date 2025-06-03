@@ -10,7 +10,7 @@ class SR500MonthlyReceipts
     @paths = paths.sort
     @receipts = []
     paths.each do |path|
-      @receipts.push SR500RecipeFile.new(path)
+      @receipts.push SR500ReceiptFile.new(path)
     end
   end
 
