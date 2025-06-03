@@ -100,6 +100,17 @@ class ReceiptParser
             type: 'return'
           }
         end
+      elsif line.include?('戻')  # '戻' marker
+        # Get the next line which contains the return amount
+        return_line = @lines[current_line + 1]
+        if return_line
+          name, price = return_line.split('-')
+          returns << {
+            name: name.strip,
+            price: parse_price(price),
+            type: 'return'
+          }
+        end
       end
       current_line += 1
     end
@@ -147,10 +158,24 @@ class ReceiptParser
       if line.include?(Cash) || line.include?(AmountReceived)  # '現金' or 'お預り'
         method = line.split('￥').first.strip
         amount = line.split('￥').last.strip
-        payments << {
-          method: method,
-          amount: parse_price(amount)
-        }
+        
+        # Check if this payment is followed by a correction
+        next_line = @lines[current_line + 1]
+        if next_line && next_line.include?(Cancellation)  # '訂正'
+          correction_amount = next_line.split('￥').last.strip
+          payments << {
+            method: method,
+            amount: parse_price(amount),
+            correction: parse_price(correction_amount),
+            type: 'payment_with_correction'
+          }
+        else
+          payments << {
+            method: method,
+            amount: parse_price(amount),
+            type: 'payment'
+          }
+        end
       end
       current_line += 1
     end

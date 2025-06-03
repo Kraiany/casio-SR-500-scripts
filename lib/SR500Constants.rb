@@ -8,7 +8,7 @@ module SR500Constants
   Cancellation      = '訂正'
   AmountReturned    = 'お  釣'     # Change or Cash - last line in sinle receipt
   Cash              = '現金'       # 現金 (げんきん - genkin) -- NOT always End of receipt
-  Reset             = '＃／替      ････････････' # Line when POS is turned OFF/ON (?? @dmytro)
+  Reset             = '＃／替      ････････････' # POS opened, drawer opened
   OrderCancellation = '取引中止' # 取引中止 (とりひきちゅうし - torihiki chūshi)
   Settlement        = '精算' # 精算 (せいさん - seisan)
   Receipt           = '領収書'  # Ryōshū-sho
@@ -34,3 +34,34 @@ module SR500Constants
 end
 
 # 領収書 - (りょうしゅうしょ - ryōshūsho) -- receipt
+
+__END__
+
+Examples
+-----------
+
+************************ Drawer opened example
+
+     2025-04-01 09:33
+                  000003
+＃／替      ････････････
+
+
+************************ Найбільш вживаний приклад - нормальний чек без повернень
+
+     2025-04-01 14:24
+                  000004
+Coffee/Te         ￥550
+対象計      10.0%   ￥550
+内税                 ￥50
+合  計          ￥550
+お預り          ￥550
+お  釣              ￥0
+
+************************ Ryōshū-sho
+
+     2025-04-05 11:47
+                  000007
+           一連No.000006
+           領収No.000001
+領収書      ￥3,470
