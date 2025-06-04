@@ -43,9 +43,9 @@ class SR500ReceiptFile < JPEncodingFile
       end
 
       # Check for reset, cancellation, or receipt markers
-      if line.match(Reset) ||
-         line.match(OrderCancellation) ||
-         line.match(Receipt) ||
+      if line.match(DrawerOpen)        || # ＃／替      ････････････'
+         line.match(OrderCancellation) || # 取引中止
+         line.match(Receipt)           || # 領収書
          next_line.strip.match(Timestamp)
         process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
@@ -64,7 +64,7 @@ class SR500ReceiptFile < JPEncodingFile
       if line.match(/^-{20,25}/)
         process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
-        next
+        break
       end
 
       # Add line to current receipt

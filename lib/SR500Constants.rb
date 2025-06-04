@@ -8,7 +8,7 @@ module SR500Constants
   Cancellation      = '訂正'
   AmountReturned    = 'お  釣'                   # Change or Cash - last line in sinle receipt
   Cash              = '現金'                     # 現金 (げんきん - genkin) -- NOT always End of receipt
-  Reset             = '＃／替      ････････････'   # POS opened, drawer opened
+  DrawerOpen        = '＃／替      ････････････'   # POS opened, drawer opened
   OrderCancellation = '取引中止'                 # 取引中止 (とりひきちゅうし - torihiki chūshi)
   Settlement        = '精算'                     # 精算 (せいさん - seisan)
   Receipt           = '領収書'                   # Ryōshū-sho

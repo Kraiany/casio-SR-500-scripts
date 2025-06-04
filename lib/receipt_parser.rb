@@ -51,7 +51,7 @@ class ReceiptParser
       break if line.include?(TaxableAmount)  || # '対象計'
                line.include?(TotalAmountDue) || # '合  計'
                line.include?(AmountReturned) || # 'お  釣'
-               line.include?(Cancellation)   || # '訂正'
+#               line.include?(Cancellation)   || # '訂正'
                line.include?(Cash)           || # '現金'
                line.include?(AmountReceived)    # 'お預り'
 
@@ -77,7 +77,7 @@ class ReceiptParser
       line = @lines[current_line].strip
 
       if line.include?(Cancellation)  # '訂正'
-        amount = line.split('￥').last.strip
+        amount = line.split(/[-￥]/).last.strip
         corrections << {
           amount: parse_price(amount),
           type: 'correction'
@@ -128,7 +128,6 @@ class ReceiptParser
     subtotal_line = @lines.find { |line| line.include?(TaxableAmount) }  # '対象計'
     return 0 unless subtotal_line
 
-#    debugger
     if subtotal_line.include?('￥') && subtotal_line.include?('%')
       _, percent_str, price_str = subtotal_line.split
     else
@@ -137,9 +136,6 @@ class ReceiptParser
       _, percent_str, price_str = "#{subtotal_line} #{next_line}".split
     end
 
-    # debugger if price_str.nil?
-    # debugger if percent_str.nil?
-    # parse_price(price_str)
     { percent: parse_percent(percent_str), amount: parse_price( price_str) }
   end
 
@@ -164,7 +160,6 @@ class ReceiptParser
   def parse_payments
     payments = []
     current_line = 0
-
     while current_line < @lines.length
       line = @lines[current_line].strip
 
@@ -175,7 +170,7 @@ class ReceiptParser
         # Check if this payment is followed by a correction
         next_line = @lines[current_line + 1]
         if next_line && next_line.include?(Cancellation)  # '訂正'
-          correction_amount = next_line.split('￥').last.strip
+          correction_amount = next_line.split(/[￥-]/).last.strip
           payments << {
             method: method,
             amount: parse_price(amount),
