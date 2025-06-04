@@ -1,32 +1,3 @@
-# Example gFormat
-# -----------
-# 対象計      10.0%   ￥550 - TaxAmmount
-# 内税                 ￥50
-# 合  計          ￥550
-# お預り          ￥550 - Change
-# お  釣              ￥0
-#      2025-04-01 09:33
-#                   000003
-# ＃／替      ････････････
-#      2025-04-01 14:24
-#                   000004
-# Coffee/Te         ￥550
-# 対象計      10.0%   ￥550 - Total
-# 内税                 ￥50 - Internal tax (???)
-# 合  計          ￥550  - Total
-# お預り          ￥550  - Deposit
-# お  釣              ￥0 - Change
-#      2025-04-01 15:32
-#                   000005
-# Coffee/Te         ￥550
-# Pyrig             ￥550
-# Pyrig             ￥550
-# 対象計      10.0% ￥1,650
-# 内税                ￥150
-# 合  計      ￥1，650
-# お預り      ￥2，000
-# お  釣          ￥350
-
 require 'jpencodingfile'
 require 'sr500order'
 require 'sr500constants'
@@ -38,11 +9,6 @@ require_relative 'SR500Order'
 class SR500ReceiptFile < JPEncodingFile
 
   include SR500Constants
-
-  attr_accessor :csv
-  attr_accessor :lines
-  attr_accessor :currency
-  attr_accessor :orders
 
   def initialize(path, currency = '￥')
     @path     = path
@@ -58,32 +24,45 @@ class SR500ReceiptFile < JPEncodingFile
   end
 
   def parse
-    orders = []
+    @orders = []
     current_receipt_lines = []
-    
-    @lines.each do |line|
+
+    @lines.each_index do |index|
+      line = @lines[index]
+      next_line = @lines[index+1]
       line.strip!
 
       # Skip empty lines
       next if line.empty?
 
+      # End of file
+      if next_line.nil?
+        process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
+        current_receipt_lines = []
+        next
+      end
+
       # Check for reset, cancellation, or receipt markers
-      if line.match(Reset) || line.match(OrderCancellation) || line.match(Receipt)
-        process_current_receipt(current_receipt_lines, orders) if current_receipt_lines.any?
+      if line.match(Reset) ||
+         line.match(OrderCancellation) ||
+         line.match(Receipt) ||
+         next_line.strip.match(Timestamp)
+        process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
         next
       end
 
       # Check for settlement line
       if line.match(/^#{Settlement}\s+[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/)
-        process_current_receipt(current_receipt_lines, orders) if current_receipt_lines.any?
+        # debugger
+        process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
         next
       end
 
       # Check for separator line
       if line.match(/^-{20,25}/)
-        process_current_receipt(current_receipt_lines, orders) if current_receipt_lines.any?
+        process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
         next
       end
@@ -93,42 +72,72 @@ class SR500ReceiptFile < JPEncodingFile
     end
 
     # Process the last receipt if any
-    process_current_receipt(current_receipt_lines, orders) if current_receipt_lines.any?
+    process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
 
-    orders
+    @orders
   end
+
+  def to_csv(header: true)
+    # debugger
+    @csv = header ? SR500Order.csv_header : ''
+    @csv << @orders.map(&:to_csv).join
+  end
+  alias to_s to_csv
 
   private
 
   def process_current_receipt(receipt_lines, orders)
     return if receipt_lines.empty?
 
+    return if receipt_lines.length < 3
+
+    # Don't include Z report
+    return if receipt_lines[2].include?(DailyReport) # 日計明細
+
     # Join the receipt lines with newlines
     receipt_text = receipt_lines.join("\n")
-    
+
     # Parse the receipt using the new ReceiptParser
     parser = ReceiptParser.new(receipt_text)
     parsed_data = parser.parse
 
     # Convert parsed data to SR500Order format
-    order = {
-      timestamp: parsed_data[:date_time].strftime("%Y-%m-%d %H:%M"),
-      date: parsed_data[:date_time].strftime("%Y-%m-%d"),
-      time: parsed_data[:date_time].strftime("%H:%M"),
-      hour: parsed_data[:date_time].strftime("%H"),
-      epoch: parsed_data[:date_time].to_i,
-      number: parsed_data[:receipt_number].to_i,
-      items: parsed_data[:items],
-      corrections: parsed_data[:corrections],
-      returns: parsed_data[:returns],
-      taxableamount: format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax]),
-      tax: format_tax(parsed_data[:tax]),
-      total: parsed_data[:total],
-      payments: parsed_data[:payments],
-      change: parsed_data[:change]
-    }
+    unless parsed_data[:date_time].nil? ||
+           parsed_data[:items].empty? ||
+           parsed_data[:tax] == 0
 
-    orders << SR500Order.new(order)
+      order = {
+        timestamp:   parsed_data[:date_time].strftime("%Y-%m-%d %H:%M"),
+        date:        parsed_data[:date_time].strftime("%Y-%m-%d"),
+        time:        parsed_data[:date_time].strftime("%H:%M"),
+        hour:        parsed_data[:date_time].strftime("%H"),
+        epoch:       parsed_data[:date_time].to_i,
+        number:      parsed_data[:receipt_number].to_i,
+        items:       parsed_data[:items],
+        corrections: parsed_data[:corrections],
+        returns:     parsed_data[:returns],
+        total:       parsed_data[:total],
+        payments:    parsed_data[:payments],
+        change:      parsed_data[:change],
+        taxableamount: format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax]),
+        # tax:         format_tax(parsed_data[:tax]),
+        tax:         parsed_data[:tax],
+      }
+
+      drop_corrections parsed_data
+
+      orders << SR500Order.new(order)
+      # debugger
+    end
+  end
+
+  def drop_corrections(parsed_data)
+    return if parsed_data[:corrections].empty?
+    parsed_data[:corrections].each do |c|
+      idx = parsed_data[:items].find_index { |x| x[:price] == c[:amount] }
+      next if idx.nil?
+      parsed_data[:items].delete_at idx
+    end
   end
 
   def format_taxable_amount(subtotal, tax)
@@ -142,20 +151,9 @@ class SR500ReceiptFile < JPEncodingFile
     { percent: ((tax_amount.to_f / (tax_amount + tax_amount)) * 100).round(1), amount: tax_amount }
   end
 
-  def to_csv(header: true)
-    csv = header ? SR500Order.csv_header : ''
-    csv << orders.map(&:to_csv).join
-  end
-  alias to_s to_csv
-
-  private
-
-    # Start fresh
-  def new_order
-    return { items: [] }
-  end
-
 end
+
+__END__
 
 # Example usage:
 receipt_text = <<~RECEIPT

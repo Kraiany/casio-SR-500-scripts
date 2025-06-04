@@ -4,7 +4,7 @@ $:.push "#{File.dirname(__FILE__)}/../lib"
 require 'debug'
 require 'sr500receiptfile'
 
-obj = SR500ReceiptFile.new("./src2/EJ250405.TXT")
+obj = SR500RecipeFile.new("./src2/EJ250405.TXT")
 obj.readlines
 obj.parse
 

@@ -48,6 +48,7 @@ class SR500Order
     @date           = order.delete :date
     @hour           = order.delete :hour
     @sequence       = order.delete :number
+    pp @date, @time
 
     @key            = "#{order[:epoch].to_i}-#{sprintf("%06d",@sequence)}"
     @tax_percent    = order[:tax][:percent]
@@ -63,10 +64,9 @@ class SR500Order
 
     @items = []
     order[:items].each do |item|
-
       i = SR500OrderItem.new(
         @key,
-        item[:product],
+        item[:name],
         item[:price],
         @timestamp,
         @sequence,

@@ -4,15 +4,19 @@ module SR500Constants
   TaxableAmount     = '対象計'
   TaxIncluded       = '内税'
   TotalAmountDue    = '合  計'
-  AmountReceived    = 'お預り'  # お預り (おあずかり)
+  AmountReceived    = 'お預り'                   # お預り (おあずかり)
   Cancellation      = '訂正'
-  AmountReturned    = 'お  釣'     # Change or Cash - last line in sinle receipt
-  Cash              = '現金'       # 現金 (げんきん - genkin) -- NOT always End of receipt
-  Reset             = '＃／替      ････････････' # POS opened, drawer opened
-  OrderCancellation = '取引中止' # 取引中止 (とりひきちゅうし - torihiki chūshi)
-  Settlement        = '精算' # 精算 (せいさん - seisan)
-  Receipt           = '領収書'  # Ryōshū-sho
+  AmountReturned    = 'お  釣'                   # Change or Cash - last line in sinle receipt
+  Cash              = '現金'                     # 現金 (げんきん - genkin) -- NOT always End of receipt
+  Reset             = '＃／替      ････････････'   # POS opened, drawer opened
+  OrderCancellation = '取引中止'                 # 取引中止 (とりひきちゅうし - torihiki chūshi)
+  Settlement        = '精算'                     # 精算 (せいさん - seisan)
+  Receipt           = '領収書'                   # Ryōshū-sho
+  DailyReport       = '日計明細'                 # Nikkei meisai
 
+
+  # 2025-03-31 12:32 - timestamp format
+  Timestamp         = Regexp.new(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/)
 
   # Column headers for generated CSV files
   HEADERS = {
