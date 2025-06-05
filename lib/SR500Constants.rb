@@ -8,12 +8,16 @@ module SR500Constants
   Cancellation      = '訂正'
   Change            = 'お  釣'                   # Change or Cash - last line in sinle receipt
   Cash              = '現金'                     # 現金 (げんきん - genkin) -- NOT always End of receipt
-  DrawerOpen        = '＃／替      ････････････'   # POS opened, drawer opened
+  DrawerOpen        = '＃／替      ････････････' # POS opened, drawer opened
+  SharpSlashKae   = '＃／替'                     # sharp-slash-kae - see
+                                                 # README_EJ_FORMAT.md for explanation
+  Return            = '戻          ････････････' # もど - modo, Return/Refund
   OrderCancellation = '取引中止'                 # 取引中止 (とりひきちゅうし - torihiki chūshi)
   Settlement        = '精算'                     # 精算 (せいさん - seisan)
   Receipt           = '領収書'                   # Ryōshū-sho
   DailyReport       = '日計明細'                 # Nikkei meisai
 
+  Yen               = '￥'
 
   # 2025-03-31 12:32 - timestamp format
   Timestamp         = Regexp.new(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/)
