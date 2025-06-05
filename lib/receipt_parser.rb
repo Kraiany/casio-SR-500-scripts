@@ -53,7 +53,7 @@ class ReceiptParser
       # Break conditions using constants
       break if line.include?(TaxableAmount)  || # '対象計'
                line.include?(TotalAmountDue) || # '合  計'
-               line.include?(AmountReturned) || # 'お  釣'
+               line.include?(Change) || # 'お  釣'
                line.include?(Cash)           || # '現金'
                line.include?(AmountReceived)    # 'お預り'
 
@@ -193,7 +193,7 @@ class ReceiptParser
   end
 
   def parse_change
-    change_line = @lines.find { |line| line.include?(AmountReturned) }  # 'お  釣'
+    change_line = @lines.find { |line| line.include?(Change) }  # 'お  釣'
     return 0 unless change_line
 
     price_str = change_line.split('￥').last.strip

@@ -25,7 +25,7 @@ sqlite3 $DB <<EOF
       taxincluded    INT,
       amountreceived INT,
       cash           INT,
-      amountreturned INT
+      change         INT
     );
 
     CREATE TABLE IF NOT EXISTS

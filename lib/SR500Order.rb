@@ -31,7 +31,7 @@ class SR500Order
   include SR500Constants
 
    [ :key, :timestamp, :date, :time, :hour, :sequence, :taxableamount, :taxincluded,
-     :totalamountdue, :amountreceived, :amountreturned, :items,
+     :totalamountdue, :amountreceived, :change, :items,
      :tax_percent, :tax_amount, :cash
    ].each do |attr|
      attr_accessor attr
@@ -59,9 +59,9 @@ class SR500Order
      @taxincluded    = order.delete :taxincluded
      @totalamountdue = order.delete :totalamountdue
      @amountreceived = order.delete :amountreceived
-     @amountreturned = order.delete :amountreturned
+     @change         = order.delete :change
      @cash           = order.delete :cash
-
+debugger
      @items = []
      order[:items].each do |item|
        i = SR500OrderItem.new(
@@ -87,7 +87,7 @@ class SR500Order
       HEADERS[:taxincluded],
       HEADERS[:amountreceived],
       HEADERS[:cash],
-      HEADERS[:amountreturned]
+      HEADERS[:change]
     ].to_csv
   end
 
@@ -109,7 +109,7 @@ class SR500Order
             taxincluded,
             amountreceived,
             cash,
-            amountreturned
+            change
            ].to_csv
   end
 
