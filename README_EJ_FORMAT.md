@@ -9,9 +9,9 @@ Each receipt in the EJ file follows this basic structure:
       YYYY-MM-DD HH:MM
                   XXXXXX
 [Items and amounts...]
-対象計     10.0%  ￥XXXX
-内税               ￥XXX
-合  計          ￥XXXX
+対象計     10.0% ￥XXXX
+内税             ￥XXX
+合  計           ￥XXXX
 [Payment and change...]
 ```
 
@@ -27,10 +27,10 @@ Example:
 Varenyky          ￥770
 Deruny            ￥880
 対象計      10.0% ￥1,650
-内税                ￥150
-合  計      ￥1,650
-お預り      ￥2,000
-お  釣          ￥350
+内税              ￥150
+合  計            ￥1,650
+お預り            ￥2,000
+お  釣            ￥350
 ```
 
 ### 2. Cash Payment Receipt
@@ -40,10 +40,10 @@ Example:
 ```
      2025-04-04 15:30
                   000012
-Lunch A         ￥1,600
-対象計      10.0% ￥1,600
-内税                ￥145
-現金        ￥1,600
+Lunch A           ￥1,600
+対象計      10.0%  ￥1,600
+内税               ￥145
+現金               ￥1,600
 ```
 
 ### 3. Multiple Items Receipt
@@ -53,17 +53,17 @@ Example:
 ```
      2025-04-05 18:08
                   000022
-Borshch         ￥1,100
-Grechanyky      ￥1,650
-Mlyntsi         ￥1,100
+Borshch           ￥1,100
+Grechanyky        ￥1,650
+Mlyntsi           ￥1,100
 Varenyky          ￥770
 Varenyky          ￥770
 Beer              ￥770
 Beer              ￥770
 Lemonade          ￥660
 対象計      10.0% ￥7,590
-内税                ￥690
-現金        ￥7,590
+内税              ￥690
+現金              ￥7,590
 ```
 
 ### 4. Receipt with Change
@@ -73,12 +73,12 @@ Example:
 ```
      2025-04-05 16:03
                   000016
-Lunch A         ￥1,600
+Lunch A           ￥1,600
 対象計      10.0% ￥1,600
-内税                ￥145
-合  計      ￥1,600
-お預り    ￥10,000
-お  釣      ￥8,400
+内税              ￥145
+合  計            ￥1,600
+お預り            ￥10,000
+お  釣            ￥8,400
 ```
 
 ### 5. Receipt with Split Tax Lines
@@ -159,20 +159,20 @@ Example 1 (with `戻` marker):
 ```
      2025-04-22 13:19
                   000007
-Bread             ￥220
+Bread               ￥220
 戻          ････････････
-Bread             -220
+Bread              -220
 訂正                ￥220
 対象計      10.0%   ￥220
-内税                 ￥20
-現金            ￥220
+内税                ￥20
+現金                ￥220
 ```
 
 Example 2 (direct correction):
 ```
      2025-04-13 15:10
                   000009
-Set A           ￥3,850
+Set A            ￥3,850
 訂正              -3,850
 現金                ￥0
 ```
@@ -185,13 +185,13 @@ Bread             ￥220
 Bread             ￥220
 Bread             ￥220
 Bread             ￥220
-Lunch A         ￥1,600
+Lunch A           ￥1,600
 対象計      10.0% ￥2,480
-内税                ￥225
-合  計      ￥2,480
-現金        ￥2,400
+内税              ￥225
+合  計            ￥2,480
+現金              ￥2,400
 訂正              -2,400
-お預り      ￥2,500
+お預り            ￥2,500
 お  釣            ￥20
 ```
 
@@ -203,27 +203,27 @@ Golubtsi          ￥880
 訂正                -880
 Varenyky          ￥770
 訂正                -770
-Easter Cake S   ￥2,000
+Easter Cake S     ￥2,000
 対象計      10.0% ￥2,000
-内税                ￥182
-合  計      ￥2,000
-お預り      ￥2,000
-お  釣              ￥0
+内税              ￥182
+合  計            ￥2,000
+お預り            ￥2,000
+お  釣            ￥0
 ```
 
 Example 5 (payment method correction):
 ```
      2025-03-30 15:31
                   000016
-Ukr.Wine 4      ￥5,500
-Ukr.Wine 4      ￥5,500
+Ukr.Wine 4        ￥5,500
+Ukr.Wine 4        ￥5,500
 対象計      10.0%
-                 ￥11,000
+                  ￥11,000
 内税              ￥1,000
-合  計    ￥11,000
-現金      ￥10,000
+合  計            ￥11,000
+現金              ￥10,000
 訂正             -10,000
-現金      ￥11,000
+現金              ￥11,000
 ```
 
 Note: Returns can be partial (returning some items from a multi-item receipt) or complete (returning all items). The tax calculation always reflects the final amount after all returns are processed. For complete cancellations, the payment amount becomes zero. In partial returns, the payment amount may be adjusted and change may be given. Payment method corrections can occur when the initial payment method or amount needs to be changed.
@@ -262,10 +262,10 @@ Example:
                  ￥49,920
 純売               16 件
                  ￥49,920
-現金在高         ￥49,920
-対象計           ￥49,920
+現金在高          ￥49,920
+対象計            ￥49,920
 内税        10.0% ￥4,537
-消費税合計        ￥4,537
+消費税合計         ￥4,537
 領収書              1 件
                   ￥3,470
 純客               16 名
@@ -293,10 +293,10 @@ File: `EJ250422.TXT`
 Bread             ￥220
 戻          ････････････
 Bread             -220
-訂正                ￥220
-対象計      10.0%   ￥220
-内税                 ￥20
-現金            ￥220
+訂正              ￥220
+対象計      10.0% ￥220
+内税              ￥20
+現金              ￥220
 ```
 
 ## Special Markers

@@ -69,6 +69,10 @@ The project works with Casio SR-500 POS register data files, which typically con
 - Order details
 - Japanese text (encoded in SJIS)
 
+### Electronic Journal File Format
+
+File format with examples of different receipt type examples is described in the file [README_EJ_FORMAT.md](README_EJ_FORMAT.md)
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
