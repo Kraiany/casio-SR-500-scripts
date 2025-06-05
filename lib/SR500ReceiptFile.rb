@@ -54,7 +54,7 @@ class SR500ReceiptFile < JPEncodingFile
 
       # Check for settlement line
       if line.match(/^#{Settlement}\s+[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/)
-        # debugger
+
         process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
         next
@@ -78,7 +78,6 @@ class SR500ReceiptFile < JPEncodingFile
   end
 
   def to_csv(header: true)
-    # debugger
     @csv = header ? SR500Order.csv_header : ''
     @csv << @orders.map(&:to_csv).join
   end
@@ -100,7 +99,6 @@ class SR500ReceiptFile < JPEncodingFile
     # Parse the receipt using the new ReceiptParser
     parser = ReceiptParser.new(receipt_text)
     parsed_data = parser.parse
-#    debugger if parsed_data[:subtotal].nil?
 
     # Convert parsed data to SR500Order format
     unless parsed_data.nil? ||

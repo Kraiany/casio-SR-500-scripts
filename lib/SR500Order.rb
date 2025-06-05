@@ -61,7 +61,7 @@ class SR500Order
      @amountreceived = order.delete :amountreceived
      @change         = order.delete :change
      @cash           = order.delete :cash
-debugger
+
      @items = []
      order[:items].each do |item|
        i = SR500OrderItem.new(

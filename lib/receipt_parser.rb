@@ -145,7 +145,6 @@ class ReceiptParser
     tax_line = @lines.find { |line| line.include?(TaxIncluded) }  # '内税'
     return 0 unless tax_line
 
-#    debugger
     price_str = tax_line.split('￥').last.strip
     parse_price(price_str)
   end

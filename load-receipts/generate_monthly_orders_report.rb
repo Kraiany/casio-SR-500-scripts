@@ -56,7 +56,6 @@ monthly_receipts = SR500MonthlyReceipts.new(matching_files)
 monthly_receipts.readlines
 monthly_receipts.parse
 
-  # debugger  
 File.open(orders_file,"w:UTF-8") do |f|
   f.write monthly_receipts.to_csv
 end
