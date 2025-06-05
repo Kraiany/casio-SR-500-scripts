@@ -35,7 +35,7 @@ class ReceiptParser
     line = @lines.find { |line| line.include?(Cash) }  # 現金
     return nil if line.nil?
     if line.include?('￥')
-      name, price = line.split('￥')
+      name, price = line.split(Yen)
     end
     parse_price price
   end
@@ -71,22 +71,49 @@ class ReceiptParser
     while current_line < @lines.length
       line = @lines[current_line].strip
 
-      # Break conditions using constants
-      break if line.include?(TaxableAmount)  || # '対象計'
-               line.include?(TotalAmountDue) || # '合  計'
-               line.include?(Change)         || # 'お  釣'
-               line.include?(Cash)           || # '現金'
-               line.include?(AmountReceived)    # 'お預り'
+      # Break conditions using constants - these go after all PLU items
+      break if line.include?(TaxableAmount)     || #対象計
+               line.include?(TaxIncluded)       || #内税
+               line.include?(TotalAmountDue)    || #合  計
+               line.include?(AmountReceived)    || #お預り
+               line.include?(Change)            || #お  釣
+               line.include?(Cash)              || #現金
+               line.include?(DrawerOpen)        || #＃／替
+               line.include?(OrderCancellation) || #取引中止
+               line.include?(Settlement)        || #精算
+               line.include?(Receipt)           || #領収書
+               line.include?(DailyReport)          #日計明細
 
-      if line.include?('￥')
-        name, price = line.split('￥')
+      # Skip this line
+      if line.include?(Cancellation)      || #訂正
+         line.include?(SharpSlashKae)     || #＃／替
+         line.include?(Return)               #戻
+        current_line += 1
+      end
+
+      if line.include?(Yen)
+        name, price = line.split(Yen)
         items << {
           name: name.strip,
           price: parse_price(price),
           type: 'sale'
         }
+        current_line += 1
+      else
+        next_line = @lines[current_line+1]
+
+        if next_line.include?(Yen)
+          line = "#{@lines[current_line]} #{next_line}"
+          name, price = line.split('￥')
+          debugger if price.nil?
+          items << {
+            name: name.strip,
+            price: parse_price(price),
+            type: 'sale'
+          }
+          current_line += 2
+        end
       end
-      current_line += 1
     end
 
     items
@@ -162,7 +189,6 @@ class ReceiptParser
   end
 
   def parse_tax
-
     tax_line = @lines.find { |line| line.include?(TaxIncluded) }  # '内税'
     return 0 unless tax_line
 
