@@ -29,7 +29,6 @@ class SR500MonthlyReceipts
   def to_csv
     csv = ''
     receipts.each_index do |index|
-      # debugger
       if index == 0
         csv << receipts[index].to_csv(header: true)
       else

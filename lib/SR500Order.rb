@@ -31,51 +31,51 @@ class SR500Order
   include SR500Constants
 
    [ :key, :timestamp, :date, :time, :hour, :sequence, :taxableamount, :taxincluded,
-     :totalamountdue, :amountreceived, :amountreturned, :items,
+     :totalamountdue, :amountreceived, :change, :items,
      :tax_percent, :tax_amount, :cash
    ].each do |attr|
      attr_accessor attr
    end
 
-  def initialize(order)
-    return unless order[:timestamp]
-    return unless order[:items]
-    return if order[:items].size == 0
-    return if order[:tax].nil?
+   def initialize(order)
 
-    @timestamp      = order.delete :timestamp
-    @time           = order.delete :time
-    @date           = order.delete :date
-    @hour           = order.delete :hour
-    @sequence       = order.delete :number
-    pp @date, @time
+     return unless order[:timestamp]
+     return unless order[:items]
+     return if order[:items].size == 0
+     return if order[:tax_percent].nil? && order[:tax_amount].nil?
 
-    @key            = "#{order[:epoch].to_i}-#{sprintf("%06d",@sequence)}"
-    @tax_percent    = order[:tax][:percent]
-    @tax_amount     = order[:tax][:amount]
-    order.delete :tax
+     @timestamp      = order.delete :timestamp
+     @time           = order.delete :time
+     @date           = order.delete :date
+     @hour           = order.delete :hour
+     @sequence       = order.delete :number
 
-    @taxableamount  = order.delete :taxableamount
-    @taxincluded    = order.delete :taxincluded
-    @totalamountdue = order.delete :totalamountdue
-    @amountreceived = order.delete :amountreceived
-    @amountreturned = order.delete :amountreturned
-    @cash           = order.delete :cash
+     @key            = "#{order[:epoch].to_i}-#{sprintf("%06d",@sequence)}"
+     @tax_percent    = order.delete :tax_percent
+     @tax_amount     = order.delete :tax_amount
+     # order.delete :tax
 
-    @items = []
-    order[:items].each do |item|
-      i = SR500OrderItem.new(
-        @key,
-        item[:name],
-        item[:price],
-        @timestamp,
-        @sequence,
-      )
+     @taxableamount  = order.delete :taxableamount
+     @taxincluded    = order.delete :taxincluded
+     @totalamountdue = order.delete :totalamountdue
+     @amountreceived = order.delete :amountreceived
+     @change         = order.delete :change
+     @cash           = order.delete :cash
 
-      @items << i
-      Items.items << i
-    end
-  end
+     @items = []
+     order[:items].each do |item|
+       i = SR500OrderItem.new(
+         @key,
+         item[:name],
+         item[:price],
+         @timestamp,
+         @sequence,
+       )
+
+       @items << i
+       Items.items << i
+     end
+   end
 
   def self.csv_header
 
@@ -87,7 +87,7 @@ class SR500Order
       HEADERS[:taxincluded],
       HEADERS[:amountreceived],
       HEADERS[:cash],
-      HEADERS[:amountreturned]
+      HEADERS[:change]
     ].to_csv
   end
 
@@ -109,7 +109,7 @@ class SR500Order
             taxincluded,
             amountreceived,
             cash,
-            amountreturned
+            change
            ].to_csv
   end
 
