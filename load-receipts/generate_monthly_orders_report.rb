@@ -64,4 +64,4 @@ File.open(items_file,"w:UTF-8") do |f|
   f.write Items.to_csv
 end
 
-puts "Звіти записано у файли: #{orders_file}, #{items_file}"
+puts "Звіти записано у файли: #{orders_file} #{items_file}"
