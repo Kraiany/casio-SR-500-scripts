@@ -6,7 +6,7 @@ require 'optparse'
 require 'date'
 require 'csv'
 require 'pathname'
-require 'sr500monthlyreceipts'
+require 'sr500_monthly_receipts'
 
 
 options = {}

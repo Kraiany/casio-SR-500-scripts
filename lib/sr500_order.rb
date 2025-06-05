@@ -1,6 +1,6 @@
 require 'debug'
 require 'csv'
-require 'sr500constants'
+require 'sr500_constants'
 
 # Class Items is only used for collecting all items into class
 # variable @@items and generating CSV for all items.

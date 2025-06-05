@@ -14,13 +14,14 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 
 ```
 .
-├── lib/                    # Core library files
-│   ├── SR500ReceiptFile.rb # Main receipt file parser
-│   ├── SR500Constants.rb   # Constants and configurations
-│   ├── SR500Order.rb       # Order data structure
-│   └── JPEncodingFile.rb   # Japanese encoding utilities
-├── load-receipts/          # Data processing scripts
-│   ├── SQL/               # SQL scripts and queries
+├── lib/                      # Core library files
+│   ├── sr500_receipt_file.rb # Main receipt file parser
+│   ├── sr500_constants.rb    # Constants and configurations
+│   ├── receipt_parser.rb     # Parser for EJ text file into data SR500Order structure
+│   ├── sr500_order.rb        # Order data structure
+│   └── jp_encoding_file.rb   # Japanese encoding utilities
+├── bin/                      # Data processing scripts
+│   ├── SQL/                  # SQL scripts and queries
 │   └── generate_monthly_orders_report.rb
 ```
 
@@ -47,7 +48,7 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 ### Reading Receipt Files
 
 ```ruby
-require_relative 'lib/SR500ReceiptFile'
+require_relative 'lib/sr500_receipt_file'
 
 # Read a receipt file
 receipt = SR500ReceiptFile.new('path/to/receipt.dat')

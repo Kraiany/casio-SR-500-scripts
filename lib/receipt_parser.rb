@@ -1,4 +1,4 @@
-require_relative 'SR500Constants'
+require_relative 'sr500_constants'
 
 class ReceiptParser
   include SR500Constants

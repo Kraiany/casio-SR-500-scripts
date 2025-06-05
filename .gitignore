@@ -2,6 +2,8 @@ data
 **/*test*.txt
 *test_files
 **/*.csv
-load-receipts/src*
+bin/src*
+**/*.db-*
+bin/CASIO*
 **/*.db
 **/temp*
