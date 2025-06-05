@@ -129,7 +129,7 @@ class SR500ReceiptFile < JPEncodingFile
         items:          parsed_data[:items],
         corrections:    parsed_data[:corrections],
         returns:        parsed_data[:returns],
-        total:          parsed_data[:total],
+        totalamountdue: parsed_data[:totalamountdue],
         payments:       parsed_data[:payments],
         change:         parsed_data[:change],
         tax_amount:     parsed_data[:tax_amount],
@@ -140,7 +140,7 @@ class SR500ReceiptFile < JPEncodingFile
         cash:           parsed_data[:cash],
         taxableamount:  format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax_percent]),
       }
-
+#debugger
       drop_corrections parsed_data # Remove cancellations together
                                    # wich cancelled items from order
 

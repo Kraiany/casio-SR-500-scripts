@@ -17,6 +17,7 @@ module SR500Constants
   Receipt           = '領収書'                   # Ryōshū-sho
   DailyReport       = '日計明細'                 # Nikkei meisai
 
+  # Currency
   Yen               = '￥'
 
   # 2025-03-31 12:32 - timestamp format
@@ -32,7 +33,7 @@ module SR500Constants
     items:          'PLU',
     taxableamount:  'TaxableAmount /対象計',
     tax_percent:    'Tax  %',
-    tax_amount:     'Total Amount /合計',      # (ごうけい - gōkei)
+    totalamountdue: 'Total Amount /合計',      # (ごうけい - gōkei)
     taxincluded:    'Tax Included  /内税',
     amountreceived: 'Amount Received /お預り', # お預り (おあずかり - oazukari)
     change:         'Change /お釣',   # お釣 (おつり - otsuri) -- End of receipt
@@ -40,36 +41,3 @@ module SR500Constants
     cancellation:   'Cancel /訂正'             # 訂正 (ていせい - teisei)
   }
 end
-
-# 領収書 - (りょうしゅうしょ - ryōshūsho) -- receipt
-
-__END__
-
-Examples
------------
-
-************************ Drawer opened example
-
-     2025-04-01 09:33
-                  000003
-＃／替      ････････････
-
-
-************************ Найбільш вживаний приклад - нормальний чек без повернень
-
-     2025-04-01 14:24
-                  000004
-Coffee/Te         ￥550
-対象計      10.0%   ￥550
-内税                 ￥50
-合  計          ￥550
-お預り          ￥550
-お  釣              ￥0
-
-************************ Ryōshū-sho
-
-     2025-04-05 11:47
-                  000007
-           一連No.000006
-           領収No.000001
-領収書      ￥3,470
