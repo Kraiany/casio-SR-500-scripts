@@ -280,6 +280,25 @@ SDｶｰﾄﾞ保存      正常終了
 時に自動送信されます。
 ```
 
+### 10. Unknown case.
+
+(DK:) I don't know how to precess the follwoing case, and what is the
+meanint of it.
+
+File: `EJ250422.TXT`
+
+```
+      2025-04-22 13:19
+                  000007
+Bread             ￥220
+戻          ････････････
+Bread             -220
+訂正                ￥220
+対象計      10.0%   ￥220
+内税                 ￥20
+現金            ￥220
+```
+
 ## Special Markers
 
 1. `対象計` (taishō-kei) - Taxable amount

@@ -69,6 +69,7 @@ class ReceiptParser
     current_line = 2
 
     while current_line < @lines.length
+#debugger
       line = @lines[current_line].strip
 
       # Break conditions using constants - these go after all PLU items
@@ -89,6 +90,7 @@ class ReceiptParser
          line.include?(SharpSlashKae)     || #＃／替
          line.include?(Return)               #戻
         current_line += 1
+        next
       end
 
       if line.include?(Yen)
@@ -102,16 +104,22 @@ class ReceiptParser
       else
         next_line = @lines[current_line+1]
 
-        if next_line.include?(Yen)
-          line = "#{@lines[current_line]} #{next_line}"
-          name, price = line.split(Yen)
-          debugger if price.nil?
-          items << {
-            name: name.strip,
-            price: parse_price(price),
-            type: 'sale'
-          }
-          current_line += 2
+        if next_line.include?(Cancellation)      || #訂正
+           next_line.include?(SharpSlashKae)     || #＃／替
+           next_line.include?(Return)               #戻
+          current_line += 1
+        else
+          if next_line.include?(Yen)
+            line = "#{@lines[current_line]} #{next_line}"
+            name, price = line.split(Yen)
+            debugger if price.nil?
+            items << {
+              name: name.strip,
+              price: parse_price(price),
+              type: 'sale'
+            }
+            current_line += 2
+          end
         end
       end
     end

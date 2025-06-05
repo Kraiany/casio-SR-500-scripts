@@ -29,11 +29,17 @@ class SR500ReceiptFile < JPEncodingFile
 
     @lines.each_index do |index|
       line = @lines[index]
-      next_line = @lines[index+1]
-      line.strip!
-
       # Skip empty lines
+      line.strip!
       next if line.empty?
+
+      next_line = @lines[index+1]
+
+      if line.strip.match(Timestamp) && current_receipt_lines.any?
+        process_current_receipt(current_receipt_lines, @orders)
+        current_receipt_lines = []
+        next
+      end
 
       # End of file
       if next_line.nil?
@@ -132,7 +138,7 @@ class SR500ReceiptFile < JPEncodingFile
         subtotal:       parsed_data[:subtotal],
         amountreceived: parsed_data[:amountreceived],
         cash:           parsed_data[:cash],
-        taxableamount: format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax_percent]),
+        taxableamount:  format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax_percent]),
       }
 
       drop_corrections parsed_data # Remove cancellations together
