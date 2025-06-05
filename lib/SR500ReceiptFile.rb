@@ -10,7 +10,7 @@ class SR500ReceiptFile < JPEncodingFile
 
   include SR500Constants
 
-  def initialize(path, currency = '￥')
+  def initialize(path, currency = Yen)
     @path     = path
     @csv      = nil
     @lines    = nil

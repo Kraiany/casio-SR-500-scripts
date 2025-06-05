@@ -47,7 +47,7 @@ class JPEncodingFile < File
         content = File.read(@path, encoding: @encoding)
         utf8_content = content.encode('UTF-8', @encoding).
                          tr!('０１２３４５６７８９','0123456789').
-                         tr!('\\','￥').
+                         tr!('\\',Yen).
                          tr!('，',',')
 
         File.open(@path, 'w:UTF-8') do |f|
