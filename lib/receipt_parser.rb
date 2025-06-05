@@ -23,11 +23,22 @@ class ReceiptParser
       tax_percent:    subtotal[:percent],
       total:          parse_total,
       payments:       parse_payments,
-      change:         parse_change
+      change:         parse_change,
+      amountreceived: parse_received,
+      cash:           parse_cash
     }
   end
 
   private
+
+  def parse_cash
+    line = @lines.find { |line| line.include?(Cash) }  # 現金
+    return nil if line.nil?
+    if line.include?('￥')
+      name, price = line.split('￥')
+    end
+    parse_price price
+  end
 
   def parse_date_time
     date_str = @lines[0].strip
@@ -36,7 +47,16 @@ class ReceiptParser
     return nil unless date_str =~ /^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/
 
     Time.parse(date_str)
- end
+  end
+
+  def parse_received
+    line = @lines.find { |line| line.include?(AmountReceived) }  # お預り
+    return nil if line.nil?
+    if line.include?('￥')
+      name, price = line.split('￥')
+    end
+    parse_price price
+  end
 
   def parse_receipt_number
     return nil if @lines[1].nil?
@@ -54,7 +74,7 @@ class ReceiptParser
       # Break conditions using constants
       break if line.include?(TaxableAmount)  || # '対象計'
                line.include?(TotalAmountDue) || # '合  計'
-               line.include?(Change) || # 'お  釣'
+               line.include?(Change)         || # 'お  釣'
                line.include?(Cash)           || # '現金'
                line.include?(AmountReceived)    # 'お預り'
 

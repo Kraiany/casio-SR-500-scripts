@@ -114,22 +114,24 @@ class SR500ReceiptFile < JPEncodingFile
            parsed_data[:tax] == 0
 
       order = {
-        timestamp:   parsed_data[:date_time].strftime("%Y-%m-%d %H:%M"),
-        date:        parsed_data[:date_time].strftime("%Y-%m-%d"),
-        time:        parsed_data[:date_time].strftime("%H:%M"),
-        hour:        parsed_data[:date_time].strftime("%H"),
-        epoch:       parsed_data[:date_time].to_i,
-        number:      parsed_data[:receipt_number].to_i,
-        items:       parsed_data[:items],
-        corrections: parsed_data[:corrections],
-        returns:     parsed_data[:returns],
-        total:       parsed_data[:total],
-        payments:    parsed_data[:payments],
-        change:      parsed_data[:change],
-        tax_amount:  parsed_data[:tax_amount],
-        tax_percent: parsed_data[:tax_percent],
-        taxincluded: parsed_data[:tax_amount],
-        subtotal:    parsed_data[:subtotal],
+        timestamp:      parsed_data[:date_time].strftime("%Y-%m-%d %H:%M"),
+        date:           parsed_data[:date_time].strftime("%Y-%m-%d"),
+        time:           parsed_data[:date_time].strftime("%H:%M"),
+        hour:           parsed_data[:date_time].strftime("%H"),
+        epoch:          parsed_data[:date_time].to_i,
+        number:         parsed_data[:receipt_number].to_i,
+        items:          parsed_data[:items],
+        corrections:    parsed_data[:corrections],
+        returns:        parsed_data[:returns],
+        total:          parsed_data[:total],
+        payments:       parsed_data[:payments],
+        change:         parsed_data[:change],
+        tax_amount:     parsed_data[:tax_amount],
+        tax_percent:    parsed_data[:tax_percent],
+        taxincluded:    parsed_data[:tax_amount],
+        subtotal:       parsed_data[:subtotal],
+        amountreceived: parsed_data[:amountreceived],
+        cash:           parsed_data[:cash],
         taxableamount: format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax_percent]),
       }
 
@@ -145,11 +147,6 @@ class SR500ReceiptFile < JPEncodingFile
     return nil unless subtotal
     "(#{tax_percent}%) #{subtotal}"
   end
-
-  # def format_tax(subtotal, tax_amount)
-  #   return nil unless tax_amount
-  #   { percent: subtotal[:percent], amount: tax_amount }
-  # end
 
   def drop_corrections(parsed_data)
     return if parsed_data[:corrections].empty?

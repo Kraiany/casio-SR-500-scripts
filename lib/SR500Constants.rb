@@ -6,7 +6,7 @@ module SR500Constants
   TotalAmountDue    = '合  計'
   AmountReceived    = 'お預り'                   # お預り (おあずかり)
   Cancellation      = '訂正'
-  Change    = 'お  釣'                   # Change or Cash - last line in sinle receipt
+  Change            = 'お  釣'                   # Change or Cash - last line in sinle receipt
   Cash              = '現金'                     # 現金 (げんきん - genkin) -- NOT always End of receipt
   DrawerOpen        = '＃／替      ････････････'   # POS opened, drawer opened
   OrderCancellation = '取引中止'                 # 取引中止 (とりひきちゅうし - torihiki chūshi)
