@@ -1,5 +1,19 @@
 # Casio SR-500 Scripts
 
+- [Casio SR-500 Scripts](#casio-sr-500-scripts)
+  * [Features](#features)
+  * [Project Structure](#project-structure)
+  * [Requirements](#requirements)
+  * [Installation](#installation)
+  * [Usage](#usage)
+    + [Reading Receipt Files](#reading-receipt-files)
+    + [Generating Monthly Reports](#generating-monthly-reports)
+  * [Data Format](#data-format)
+    + [Electronic Journal File Format](#electronic-journal-file-format)
+  * [Contributing](#contributing)
+
+---
+
 A collection of Ruby scripts and utilities for working with Casio SR-500 POS register data. This project provides tools for reading, parsing, and analyzing receipt data from Casio SR-500 POS registers.
 
 ## Features

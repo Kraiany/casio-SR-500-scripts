@@ -2,6 +2,23 @@
 
 This document describes the various receipt formats found in the Casio SR-500 Electronic Journal (EJ) files.
 
+- [Basic Receipt Structure](#basic-receipt-structure)
+- [Receipt Types](#receipt-types)
+  * [1. Standard Sale Receipt](#1-standard-sale-receipt)
+  * [2. Cash Payment Receipt](#2-cash-payment-receipt)
+  * [3. Multiple Items Receipt](#3-multiple-items-receipt)
+  * [4. Receipt with Change](#4-receipt-with-change)
+  * [5. Receipt with Split Tax Lines](#5-receipt-with-split-tax-lines)
+  * [6. Receipt with Return/Cancellation](#6-receipt-with-returncancellation)
+  * [7. Official Receipt (領収書 - ryōshū-sho)](#7-official-receipt-%E9%A0%98%E5%8F%8E%E6%9B%B8---ryoshu-sho)
+  * [8. Drawer Open Record (＃／替 - kai)](#8-drawer-open-record-%EF%BC%83%EF%BC%8F%E6%9B%BF---kai)
+  * [9. Daily Summary (日計明細 - nikkei meisai)](#9-daily-summary-%E6%97%A5%E8%A8%88%E6%98%8E%E7%B4%B0---nikkei-meisai)
+  * [10. Unknown case.](#10-unknown-case)
+- [Special Markers](#special-markers)
+- [File Format](#file-format)
+- [Data Fields](#data-fields)
+- [Notes](#notes)
+
 ## Basic Receipt Structure
 
 Each receipt in the EJ file follows this basic structure:
