@@ -100,9 +100,11 @@ class SR500ReceiptFile < JPEncodingFile
     # Parse the receipt using the new ReceiptParser
     parser = ReceiptParser.new(receipt_text)
     parsed_data = parser.parse
+#    debugger if parsed_data[:subtotal].nil?
 
     # Convert parsed data to SR500Order format
-    unless parsed_data[:date_time].nil? ||
+    unless parsed_data.nil? ||
+           parsed_data[:date_time].nil? ||
            parsed_data[:items].empty? ||
            parsed_data[:tax] == 0
 
@@ -119,17 +121,30 @@ class SR500ReceiptFile < JPEncodingFile
         total:       parsed_data[:total],
         payments:    parsed_data[:payments],
         change:      parsed_data[:change],
-        taxableamount: format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax]),
-        # tax:         format_tax(parsed_data[:tax]),
-        tax:         parsed_data[:tax],
+        tax_amount:  parsed_data[:tax_amount],
+        tax_percent: parsed_data[:tax_percent],
+        taxincluded: parsed_data[:tax_amount],
+        subtotal:    parsed_data[:subtotal],
+        taxableamount: format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax_percent]),
       }
 
-      drop_corrections parsed_data
+      drop_corrections parsed_data # Remove cancellations together
+                                   # wich cancelled items from order
 
       orders << SR500Order.new(order)
-      # debugger
+
     end
   end
+
+  def format_taxable_amount(subtotal, tax_percent)
+    return nil unless subtotal
+    "(#{tax_percent}%) #{subtotal}"
+  end
+
+  # def format_tax(subtotal, tax_amount)
+  #   return nil unless tax_amount
+  #   { percent: subtotal[:percent], amount: tax_amount }
+  # end
 
   def drop_corrections(parsed_data)
     return if parsed_data[:corrections].empty?
@@ -138,17 +153,6 @@ class SR500ReceiptFile < JPEncodingFile
       next if idx.nil?
       parsed_data[:items].delete_at idx
     end
-  end
-
-  def format_taxable_amount(subtotal, tax)
-    return nil unless subtotal && tax
-    tax_percent = ((tax.to_f / subtotal) * 100).round(1)
-    "(#{tax_percent}%) #{subtotal}"
-  end
-
-  def format_tax(tax_amount)
-    return nil unless tax_amount
-    { percent: ((tax_amount.to_f / (tax_amount + tax_amount)) * 100).round(1), amount: tax_amount }
   end
 
 end

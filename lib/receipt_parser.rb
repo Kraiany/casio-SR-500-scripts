@@ -9,14 +9,17 @@ class ReceiptParser
   end
 
   def parse
+    subtotal = parse_subtotal
+    return if subtotal[:amount] == 0
     {
       date_time:      parse_date_time,
       receipt_number: parse_receipt_number,
       items:          parse_items,
       corrections:    parse_corrections,
       returns:        parse_returns,
-      # subtotal:       parse_subtotal,
-      tax:            parse_subtotal,
+      subtotal:       subtotal[:amount],
+      tax_amount:     parse_tax,
+      tax_percent:    subtotal[:percent],
       total:          parse_total,
       payments:       parse_payments,
       change:         parse_change
@@ -51,7 +54,6 @@ class ReceiptParser
       break if line.include?(TaxableAmount)  || # '対象計'
                line.include?(TotalAmountDue) || # '合  計'
                line.include?(AmountReturned) || # 'お  釣'
-#               line.include?(Cancellation)   || # '訂正'
                line.include?(Cash)           || # '現金'
                line.include?(AmountReceived)    # 'お預り'
 
@@ -126,28 +128,27 @@ class ReceiptParser
 
   def parse_subtotal
     subtotal_line = @lines.find { |line| line.include?(TaxableAmount) }  # '対象計'
-    return 0 unless subtotal_line
+    return { percent: 0, amount: 0 } unless subtotal_line
 
     if subtotal_line.include?('￥') && subtotal_line.include?('%')
       _, percent_str, price_str = subtotal_line.split
     else
       next_line = @lines[@lines.index(subtotal_line) + 1]
-      # price_str = next_line.split('￥').last.strip if next_line
       _, percent_str, price_str = "#{subtotal_line} #{next_line}".split
     end
 
     { percent: parse_percent(percent_str), amount: parse_price( price_str) }
   end
 
-  # def parse_tax
+  def parse_tax
 
-  #   # tax_line = @lines.find { |line| line.include?(TaxIncluded) }  # '内税'
-  #   # return 0 unless tax_line
+    tax_line = @lines.find { |line| line.include?(TaxIncluded) }  # '内税'
+    return 0 unless tax_line
 
-  #   # debugger
-  #   # price_str = tax_line.split('￥').last.strip
-  #   # parse_price(price_str)
-  # end
+#    debugger
+    price_str = tax_line.split('￥').last.strip
+    parse_price(price_str)
+  end
 
   def parse_total
     total_line = @lines.find { |line| line.include?(TotalAmountDue) }  # '合  計'
