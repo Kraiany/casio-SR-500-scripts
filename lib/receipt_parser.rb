@@ -1,4 +1,4 @@
-require_relative 'SR500Constants'
+require_relative 'sr500_constants'
 
 class ReceiptParser
   include SR500Constants
@@ -21,7 +21,7 @@ class ReceiptParser
       subtotal:       subtotal[:amount],
       tax_amount:     parse_tax,
       tax_percent:    subtotal[:percent],
-      total:          parse_total,
+      totalamountdue: parse_total,
       payments:       parse_payments,
       change:         parse_change,
       amountreceived: parse_received,

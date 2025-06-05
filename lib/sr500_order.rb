@@ -1,6 +1,6 @@
 require 'debug'
 require 'csv'
-require 'sr500constants'
+require 'sr500_constants'
 
 # Class Items is only used for collecting all items into class
 # variable @@items and generating CSV for all items.
@@ -53,7 +53,6 @@ class SR500Order
      @key            = "#{order[:epoch].to_i}-#{sprintf("%06d",@sequence)}"
      @tax_percent    = order.delete :tax_percent
      @tax_amount     = order.delete :tax_amount
-     # order.delete :tax
 
      @taxableamount  = order.delete :taxableamount
      @taxincluded    = order.delete :taxincluded
@@ -79,11 +78,16 @@ class SR500Order
 
   def self.csv_header
 
-    [ "key", HEADERS[:timestamp],
-      HEADERS[:date], HEADERS[:time], HEADERS[:hour],
+    [ "key",
+      HEADERS[:timestamp],
+      HEADERS[:date],
+      HEADERS[:time],
+      HEADERS[:hour],
       HEADERS[:sequence],
-      HEADERS[:items],          HEADERS[:tax_percent],
-      HEADERS[:tax_amount],     HEADERS[:taxableamount],
+      HEADERS[:items],
+      HEADERS[:tax_percent],
+      HEADERS[:totalamountdue],
+      HEADERS[:taxableamount],
       HEADERS[:taxincluded],
       HEADERS[:amountreceived],
       HEADERS[:cash],
@@ -104,7 +108,7 @@ class SR500Order
             sequence,
             items_str,
             tax_percent,
-            tax_amount,
+            totalamountdue,
             taxableamount,
             taxincluded,
             amountreceived,

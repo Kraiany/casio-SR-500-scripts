@@ -1,4 +1,4 @@
-require 'sr500receiptfile'
+require 'sr500_receipt_file'
 
 class SR500MonthlyReceipts
 
