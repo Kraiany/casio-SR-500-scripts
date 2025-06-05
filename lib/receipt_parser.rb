@@ -11,6 +11,7 @@ class ReceiptParser
   def parse
     subtotal = parse_subtotal
     return if subtotal[:amount] == 0
+
     {
       date_time:      parse_date_time,
       receipt_number: parse_receipt_number,

@@ -37,34 +37,41 @@ class SR500ReceiptFile < JPEncodingFile
 
       # End of file
       if next_line.nil?
+        current_receipt_lines << line
+        process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
+        current_receipt_lines = []
+        return
+      end
+
+      if  next_line && next_line.strip.match(Timestamp)
+        current_receipt_lines << line
         process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
         next
       end
 
-      # Check for reset, cancellation, or receipt markers
-      if line.match(DrawerOpen)        || # ＃／替      ････････････'
-         line.match(OrderCancellation) || # 取引中止
-         line.match(Receipt)           || # 領収書
-         next_line.strip.match(Timestamp)
-        process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
-        current_receipt_lines = []
-        next
-      end
+      # # Check for reset, cancellation, or receipt markers
+      # if line.match(DrawerOpen)        || # ＃／替      ････････････'
+      #    line.match(OrderCancellation) || # 取引中止
+      #    line.match(Receipt)              # 領収書
+      #   process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
+      #   current_receipt_lines = []
+      #   next
+      # end
 
       # Check for settlement line
-      if line.match(/^#{Settlement}\s+[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/)
+      # if line.match(/^#{Settlement}\S+[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/) # 精算
 
-        process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
-        current_receipt_lines = []
-        next
-      end
+      #   process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
+      #   current_receipt_lines = []
+      #   next
+      # end
 
       # Check for separator line
       if line.match(/^-{20,25}/)
         process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
-        break
+        return
       end
 
       # Add line to current receipt
@@ -101,9 +108,9 @@ class SR500ReceiptFile < JPEncodingFile
     parsed_data = parser.parse
 
     # Convert parsed data to SR500Order format
-    unless parsed_data.nil? ||
+    unless parsed_data.nil?             ||
            parsed_data[:date_time].nil? ||
-           parsed_data[:items].empty? ||
+           parsed_data[:items].empty?   ||
            parsed_data[:tax] == 0
 
       order = {
