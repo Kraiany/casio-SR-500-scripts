@@ -57,6 +57,11 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
    bundle install
    ```
 
+3. install NPM module for Table of Contents generation:
+  ```
+  npm install
+  ```
+
 ## Usage
 
 ### Reading Receipt Files
@@ -85,7 +90,16 @@ The project works with Casio SR-500 POS register data files, which typically con
 
 ### Electronic Journal File Format
 
-File format with examples of different receipt type examples is described in the file [README_EJ_FORMAT.md](README_EJ_FORMAT.md)
+File format with examples of different receipt type examples is
+described in the file [README_EJ_FORMAT.md](README_EJ_FORMAT.md)
+
+## Documentation
+
+NPM module `markdown-toc` is used generating table of contents in
+README* files. To generate TOC run:
+  ```
+  npm exec markdown-toc -i README.md
+  ```
 
 ## Contributing
 
