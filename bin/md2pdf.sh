@@ -11,9 +11,9 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-INPUT_FILE="<span class="math-inline">1"
-\# Automatically create the output filename by replacing \.md with \.pdf
-OUTPUT\_FILE\="</span>{INPUT_FILE%.md}.pdf"
+INPUT_FILE=$1
+# Automatically create the output filename by replacing \.md with \.pdf
+OUTPUT_FILE={INPUT_FILE%.md}.pdf
 
 # --- Run the Pandoc command
 pandoc "$INPUT_FILE" \

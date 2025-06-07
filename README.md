@@ -85,6 +85,7 @@ ruby generate_monthly_orders_report.rb
 ## Data Format
 
 The project works with Casio SR-500 POS register data files, which typically contain:
+
 - Transaction records
 - Order details
 - Japanese text (encoded in SJIS)
