@@ -10,8 +10,9 @@
     + [Generating Monthly Reports](#generating-monthly-reports)
   * [Data Format](#data-format)
     + [Electronic Journal File Format](#electronic-journal-file-format)
+  * [Documentation](#documentation)
+    + [PDF generation](#pdf-generation)
   * [Contributing](#contributing)
-
 ---
 
 A collection of Ruby scripts and utilities for working with Casio SR-500 POS register data. This project provides tools for reading, parsing, and analyzing receipt data from Casio SR-500 POS registers.
@@ -100,6 +101,12 @@ README* files. To generate TOC run:
   ```
   npm exec markdown-toc -i README.md
   ```
+
+### PDF generation
+
+For documentation and reports utility script `md2pdf.sh` can be
+used. Please see [README_PDF](./README_PDF.md) file for details about
+installation and usage of the script.
 
 ## Contributing
 
