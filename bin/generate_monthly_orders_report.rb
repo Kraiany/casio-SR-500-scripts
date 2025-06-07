@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$: << "#{File.dirname(__FILE__)}/../lib"
+$: << File.expand_path('../../lib', __FILE__)
 
 require 'optparse'
 require 'date'

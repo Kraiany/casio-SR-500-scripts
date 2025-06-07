@@ -1,10 +1,14 @@
 require 'fileutils'
 require 'open3'
 require 'pry'
+require 'sr500_constants'
 
 # A class for opening Shift-JIS files as UTF-8. Uses uchardet binary
 # for charset detection.
 class JPEncodingFile < File
+
+  include SR500Constants
+
   # The path to the input file.
   attr_accessor :path
   # The encoding of the file (detected by uchardet).
