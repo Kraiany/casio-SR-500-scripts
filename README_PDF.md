@@ -7,14 +7,14 @@ This document describes a script for converting Markdown files into high-quality
 
 - [Markdown to PDF Conversion Script](#markdown-to-pdf-conversion-script)
   * [English](#english)
-    + [1\. Description](#1-description)
-    + [2\. Prerequisites & Installation (macOS)](#2-prerequisites--installation-macos)
-    + [3\. The Script (`md2pdf.sh`)](#3-the-script-generate_pdfsh)
-    + [4\. Usage](#4-usage)
+    + [1. Description](#1-description)
+    + [2. Prerequisites & Installation (macOS)](#2-prerequisites--installation-macos)
+    + [3. The Script (`md2pdf.sh`)](#3-the-script-md2pdfsh)
+    + [4. Usage](#4-usage)
   * [Українська](#%D1%83%D0%BA%D1%80%D0%B0%D1%97%D0%BD%D1%81%D1%8C%D0%BA%D0%B0)
-    + [1\. Опис](#1-%D0%BE%D0%BF%D0%B8%D1%81)
-    + [2\. Вимоги та встановлення (macOS)](#2-%D0%B2%D0%B8%D0%BC%D0%BE%D0%B3%D0%B8-%D1%82%D0%B0-%D0%B2%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8F-macos)
-    + [3\. Скрипт (`md2pdf.sh`)](#3-%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82-generate_pdfsh)
+    + [1. Опис](#1-%D0%BE%D0%BF%D0%B8%D1%81)
+    + [2. Вимоги та встановлення (macOS)](#2-%D0%B2%D0%B8%D0%BC%D0%BE%D0%B3%D0%B8-%D1%82%D0%B0-%D0%B2%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8F-macos)
+    + [3. Скрипт (`md2pdf.sh`)](#3-%D1%81%D0%BA%D1%80%D0%B8%D0%BF%D1%82-md2pdfsh)
 
 ---
 
@@ -34,7 +34,7 @@ Follow these steps to set up the necessary environment on your Mac.
 
 If you don't have Homebrew (the package manager for macOS), install it by running this command in your terminal:
 ```bash
-/bin/bash -c "$(curl -fsSL [https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh](https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh))"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 **Step 2: Install Pandoc and MacTeX**
@@ -42,6 +42,7 @@ If you don't have Homebrew (the package manager for macOS), install it by runnin
 `MacTeX` is a full LaTeX distribution and is required for the `xelatex` engine. `Pandoc` is the conversion tool.
 ```bash
 brew install pandoc
+brew install librsvg
 brew install --cask mactex
 ```
 *Note: MacTeX is a large download (over 5 GB).*
@@ -55,6 +56,25 @@ You need to tell your shell where to find the LaTeX binaries. Add the following 
 export PATH="/usr/local/texlive/2025/bin/universal-darwin:$PATH"
 ```
 After adding it, restart your terminal or run `source ~/.zshrc`.
+
+**Step 4: Verify Fonts (Optional)**
+
+The script uses specific fonts. You can check if you have fonts that support certain languages using the fc-list command. For example, to find fonts supporting Ukrainian or Japanese:
+
+```bash
+
+# List fonts with Ukrainian language support
+fc-list :lang=uk
+
+# List fonts with Japanese language support
+fc-list :lang=ja
+```
+If a required font is not found, Pandoc will raise an error. You may need to install the font or change it in the script.
+
+Further Reading:
+For more details on Pandoc and character encoding, this resource is helpful: 
+
+* [Stack Overflow: Pandoc and foreign characters](https://stackoverflow.com/questions/18178084/pandoc-and-foreign-characters)
 
 ### 3. The Script (`md2pdf.sh`)
 
@@ -141,6 +161,26 @@ brew install --cask mactex
 export PATH="/usr/local/texlive/2025/bin/universal-darwin:$PATH"
 ```
 Після цього перезапустіть термінал або виконайте `source ~/.zshrc`.
+
+**Крок 4: Перевірка шрифтів (опційно)**
+
+Скрипт використовує певні шрифти. Ви можете перевірити наявність шрифтів, що підтримують потрібні мови, за допомогою команди fc-list. Наприклад, щоб знайти шрифти для української чи японської мов:
+
+```bash
+
+# Список шрифтів з підтримкою української мови
+fc-list :lang=uk
+
+# Список шрифтів з підтримкою японської мови
+fc-list :lang=ja
+```
+
+Якщо потрібний шрифт не знайдено, Pandoc видасть помилку. Можливо, вам доведеться встановити шрифт або змінити його назву у скрипті.
+
+**Додаткова інформація:**
+Для отримання додаткових відомостей про Pandoc та кодування символів буде корисним цей ресурс:
+
+* [Stack Overflow: Pandoc and foreign characters](https://stackoverflow.com/questions/18178084/pandoc-and-foreign-characters)
 
 ### 3. Скрипт (`md2pdf.sh`)
 
