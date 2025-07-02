@@ -35,11 +35,24 @@ class SR500ReceiptFile < JPEncodingFile
 
       next_line = @lines[index+1]
 
+      # Коли на рядку є тільки timestamp це означає початок нового
+      # чека. Якщо при цьому є буфер з прочитаними рядками, створити
+      # новий об'єкт чека і почати новий блок
       if line.strip.match(Timestamp) && current_receipt_lines.any?
         process_current_receipt(current_receipt_lines, @orders)
         current_receipt_lines = []
         next
       end
+
+      # Case: 戻 2025-06-22 13:58 - коли Timestamp починає новий чек
+      # із символом повернення: 戻
+      if line.strip.match(/戻\s+\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/)  && current_receipt_lines.any?
+         # TODO: fix to use constant for timestamp
+        process_current_receipt(current_receipt_lines, @orders)
+        current_receipt_lines = []
+        next
+      end
+
 
       # End of file
       if next_line.nil?
@@ -55,23 +68,6 @@ class SR500ReceiptFile < JPEncodingFile
         current_receipt_lines = []
         next
       end
-
-      # # Check for reset, cancellation, or receipt markers
-      # if line.match(DrawerOpen)        || # ＃／替      ････････････'
-      #    line.match(OrderCancellation) || # 取引中止
-      #    line.match(Receipt)              # 領収書
-      #   process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
-      #   current_receipt_lines = []
-      #   next
-      # end
-
-      # Check for settlement line
-      # if line.match(/^#{Settlement}\S+[\d]{4}-[\d]{2}-[\d]{2}\s+[\d]{2}:[\d]{2}$/) # 精算
-
-      #   process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
-      #   current_receipt_lines = []
-      #   next
-      # end
 
       # Check for separator line
       if line.match(/^-{20,25}/)
