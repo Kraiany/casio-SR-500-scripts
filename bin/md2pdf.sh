@@ -11,9 +11,11 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+PATH="/usr/local/texlive/2025/bin/universal-darwin:$PATH"
+
 INPUT_FILE=$1
 # Automatically create the output filename by replacing \.md with \.pdf
-OUTPUT_FILE={INPUT_FILE%.md}.pdf
+OUTPUT_FILE=${INPUT_FILE%.md}.pdf
 
 # --- Run the Pandoc command
 pandoc "$INPUT_FILE" \
@@ -21,6 +23,9 @@ pandoc "$INPUT_FILE" \
     -o "$OUTPUT_FILE" \
     -V CJKmainfont="Toppan Bunkyu Gothic" \
     -V mainfont="Times New Roman" \
+    -V monofont="Courier New" \
+    -V monofontoptions="Scale=0.9" \
+    -V fontsize=10pt \
     -V geometry:"top=1cm, bottom=2cm, left=2cm, right=2cm" \
     -V papersize=a4
 
@@ -31,3 +36,7 @@ else
     echo "❌ Failed to generate PDF."
 fi
 
+# Helvetica Neue
+# PT Mono
+# Monaco
+# Arial
