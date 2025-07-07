@@ -9,3 +9,5 @@ bin/CASIO*
 **/temp*
 .DS_Store
 node_modules/
+*.png
+XZ
