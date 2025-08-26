@@ -1,6 +1,6 @@
 require 'fileutils'
 require 'open3'
-require 'pry'
+require 'debug'
 require 'sr500_constants'
 
 # A class for opening Shift-JIS files as UTF-8. Uses uchardet binary
