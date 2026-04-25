@@ -22,6 +22,7 @@ module SR500Constants
 
   # 2025-03-31 12:32 - timestamp format
   Timestamp         = Regexp.new(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/)
+  SettlementTime    = Regexp.new(/^精算 \d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/) # 精算 (せいさん - seisan)+ timestamp
 
   # Column headers for generated CSV files
   HEADERS = {
