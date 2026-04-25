@@ -43,7 +43,14 @@ class SR500ReceiptFile < JPEncodingFile
         current_receipt_lines = []
         next
       end
-
+      # Case: 精算 2026-04-09 17:03
+      # Коли в рядку є Settlement з датою: ознака кінця чеків і початку 
+      # секцій підсумку.
+      if line.strip.match(SettlementTime) && current_receipt_lines.any?
+        process_current_receipt(current_receipt_lines, @orders)
+        current_receipt_lines = []
+        next
+      end
       # Case: 戻 2025-06-22 13:58 - коли Timestamp починає новий чек
       # із символом повернення: 戻
       if line.strip.match(/戻\s+\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/)  && current_receipt_lines.any?

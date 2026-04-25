@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'debug'
+
 $: << File.expand_path('../../lib', __FILE__)
 
 require 'optparse'
@@ -31,6 +33,11 @@ OptionParser.new do |opts|
     exit 1
   end
 end.parse!
+
+if  ARGV.empty?
+  puts "List of files to process empty"
+  exit 1
+end
 
 file_path_with_wildcard = ARGV.first
 matching_files = Dir.glob(file_path_with_wildcard)
