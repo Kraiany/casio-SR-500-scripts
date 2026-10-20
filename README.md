@@ -32,12 +32,14 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 ├── lib/                         # Core library files
 │   ├── sr500_receipt_file.rb    # Splits an EJ file into receipts
 │   ├── sr500_monthly_receipts.rb # Runs several EJ files as one batch
+│   ├── sr500_plu_file.rb        # Reader for the binary PLU settings file
 │   ├── sr500_constants.rb       # Constants and configurations
 │   ├── receipt_parser.rb        # Parser for one receipt into a data structure
 │   ├── sr500_order.rb           # Order data structure
 │   └── jp_encoding_file.rb      # Japanese encoding utilities
 ├── bin/                         # Command-line scripts
 │   ├── generate_monthly_orders_report.rb # Writes orders and items CSV files
+│   ├── extract_plu_settings.rb  # Writes the PLU settings of the register to CSV
 │   ├── open_recode_sjis_file.rb # Converts Shift-JIS files to UTF-8 in place
 │   └── md2pdf.sh                # Markdown to PDF (see README_PDF.md)
 ```
@@ -78,6 +80,21 @@ bundle exec ruby bin/generate_monthly_orders_report.rb \
 ```
 
 Note that the input files are converted from Shift-JIS to UTF-8 **in place** before they are parsed. Run the script on a copy if you need to keep the original exports unchanged.
+
+### Extracting PLU Settings
+
+The register's PLU (product) settings are stored in a binary file,
+`AUTOPGM/FILE092P.092`, in the data export. To get them as a UTF-8 CSV:
+
+```bash
+ruby bin/extract_plu_settings.rb -o plu_settings.csv \
+  "data/CASIO-2026-02-01/SR500_550_4000/AUTOPGM/FILE092P.092"
+```
+
+Columns are `PLU`, `Name`, `Price`, `Department`, `Department Name` and
+`Flags` (raw hex of five status bytes, meaning not decoded). Unused slots
+are skipped; pass `--all` to include all 2500. The file is only read, not
+modified.
 
 ### Reading Receipt Files
 
