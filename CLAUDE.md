@@ -17,6 +17,9 @@ bundle exec ruby bin/generate_monthly_orders_report.rb -o orders.csv -i items.cs
 # Convert SJIS receipt files to UTF-8 in place (uses uchardet; must be installed)
 ruby bin/open_recode_sjis_file.rb "copy/CASIO*/**/*.TXT"
 
+# Export the PLU (product) settings from the binary AUTOPGM/FILE092P.092 to CSV (read-only)
+ruby bin/extract_plu_settings.rb -o plu_settings.csv "data/CASIO-2026-02-01/SR500_550_4000/AUTOPGM/FILE092P.092"
+
 # Regenerate the TOC of a README
 npm exec markdown-toc -i README.md
 
@@ -39,6 +42,8 @@ The pipeline, which spans several files:
 5. **Filtering** — a receipt is dropped if it has no date, no items, or zero tax (`parsed_data[:tax_amount]` is `0` when the receipt has no 内税 line or a zero tax amount).
 6. **Modeling** — `lib/sr500_order.rb` holds `SR500Order` (one per receipt, with a `key` of `<epoch>-<6-digit receipt number>`) and `SR500OrderItem`. Every item is also appended to the class-level `Items.items` array, which is what `Items.to_csv` writes. This global state means `Items` accumulates across all files processed in one run.
 7. **Aggregation / CLI** — `lib/sr500_monthly_receipts.rb` (`SR500MonthlyReceipts`) takes a list of paths (sorted), builds one `SR500ReceiptFile` per path, and concatenates their CSV output with a single header. `bin/generate_monthly_orders_report.rb` is the only real entry point: it globs the path argument, parses, and writes the orders CSV (`-o`) and the items CSV (`-i`).
+
+`lib/sr500_plu_file.rb` (`SR500PluFile`) is separate from this pipeline: it reads the binary `AUTOPGM/FILE092P.092` settings dump (not EJ text). The layout was reverse-engineered, see the comments in the class: tables with an 18-byte header, fixed-size records, Shift-JIS names, BCD prices. The PLU number is the record number. Flags (`0x40` etc.) and two trailing bytes per record are not decoded. All `FILE092P.092` copies under `data/` are byte-identical.
 
 `lib/sr500_constants.rb` is the shared vocabulary: the Japanese labels, the timestamp regexes, the CSV `HEADERS`, and `Yen = '￥'`. Change parsing behavior there first.
 
