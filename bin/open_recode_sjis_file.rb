@@ -33,6 +33,6 @@ if matching_files.empty?
 end
 
 matching_files.each do |sjis_file_path|
-  JPEncodingFile.new(sjis_file_path)
+  JPEncodingFile.new(sjis_file_path).close
   puts "Конвертовано в UTF-8 файл: #{sjis_file_path}"
 end

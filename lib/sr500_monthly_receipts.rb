@@ -9,8 +9,10 @@ class SR500MonthlyReceipts
   def initialize(paths)
     @paths = paths.sort
     @receipts = []
+    # Read each file as it is opened so its handle is closed before
+    # the next one is opened.
     paths.each do |path|
-      @receipts.push SR500ReceiptFile.new(path)
+      @receipts.push SR500ReceiptFile.new(path).tap(&:readlines)
     end
   end
 
