@@ -18,8 +18,14 @@ class SR500ReceiptFile < JPEncodingFile
     super(@path)
   end
 
+  # Reads the file once and closes its handle, so callers do not keep
+  # a file descriptor open per receipt file.
   def readlines
-    @lines = super
+    @lines ||= begin
+      super
+    ensure
+      close unless closed?
+    end
   end
 
   def parse
