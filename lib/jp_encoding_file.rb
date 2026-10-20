@@ -1,6 +1,5 @@
 require 'fileutils'
 require 'open3'
-require 'debug'
 require 'sr500_constants'
 
 # A class for opening Shift-JIS files as UTF-8. Uses uchardet binary
@@ -50,9 +49,9 @@ class JPEncodingFile < File
       begin
         content = File.read(@path, encoding: @encoding)
         utf8_content = content.encode('UTF-8', @encoding).
-                         tr!('０１２３４５６７８９','0123456789').
-                         tr!('\\',Yen).
-                         tr!('，',',')
+                         tr('０１２３４５６７８９','0123456789').
+                         tr('\\',Yen).
+                         tr('，',',')
 
         File.open(@path, 'w:UTF-8') do |f|
           f.write(utf8_content)

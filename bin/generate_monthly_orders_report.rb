@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'debug'
-
 $: << File.expand_path('../../lib', __FILE__)
 
 require 'optparse'

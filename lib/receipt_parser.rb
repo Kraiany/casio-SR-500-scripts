@@ -69,7 +69,6 @@ class ReceiptParser
     current_line = 2
 
     while current_line < @lines.length
-#debugger
       line = @lines[current_line].strip
 
       # Break conditions using constants - these go after all PLU items
@@ -112,7 +111,6 @@ class ReceiptParser
           if next_line.include?(Yen)
             line = "#{@lines[current_line]} #{next_line}"
             name, price = line.split(Yen)
-            debugger if price.nil?
             items << {
               name: name.strip,
               price: parse_price(price),
@@ -156,7 +154,7 @@ class ReceiptParser
 
       if line.include?(OrderCancellation)  # '取引中止'
         return_line = @lines[current_line + 1]
-        if return_line
+        if return_line&.include?('-')
           name, price = return_line.split('-')
           returns << {
             name: name.strip,
@@ -165,9 +163,11 @@ class ReceiptParser
           }
         end
       elsif line.include?('戻')  # '戻' marker
-        # Get the next line which contains the return amount
+        # Get the next line which contains the return amount. Receipt
+        # headers (戻 <timestamp>) are followed by a receipt number, not
+        # an amount, so skip lines without a '-' separator.
         return_line = @lines[current_line + 1]
-        if return_line
+        if return_line&.include?('-')
           name, price = return_line.split('-')
           returns << {
             name: name.strip,
