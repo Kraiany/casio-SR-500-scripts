@@ -29,21 +29,24 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 
 ```
 .
-├── lib/                      # Core library files
-│   ├── sr500_receipt_file.rb # Main receipt file parser
-│   ├── sr500_constants.rb    # Constants and configurations
-│   ├── receipt_parser.rb     # Parser for EJ text file into data SR500Order structure
-│   ├── sr500_order.rb        # Order data structure
-│   └── jp_encoding_file.rb   # Japanese encoding utilities
-├── bin/                      # Data processing scripts
-│   ├── SQL/                  # SQL scripts and queries
-│   └── generate_monthly_orders_report.rb
+├── lib/                         # Core library files
+│   ├── sr500_receipt_file.rb    # Splits an EJ file into receipts
+│   ├── sr500_monthly_receipts.rb # Runs several EJ files as one batch
+│   ├── sr500_constants.rb       # Constants and configurations
+│   ├── receipt_parser.rb        # Parser for one receipt into a data structure
+│   ├── sr500_order.rb           # Order data structure
+│   └── jp_encoding_file.rb      # Japanese encoding utilities
+├── bin/                         # Command-line scripts
+│   ├── generate_monthly_orders_report.rb # Writes orders and items CSV files
+│   ├── open_recode_sjis_file.rb # Converts Shift-JIS files to UTF-8 in place
+│   └── md2pdf.sh                # Markdown to PDF (see README_PDF.md)
 ```
 
 ## Requirements
 
-- Ruby (see `.ruby-version` for specific version)
+- Ruby (see `bin/.ruby-version` for specific version)
 - Required gems (see `Gemfile` for dependencies)
+- `uchardet` on the `PATH` for charset detection (`brew install uchardet`)
 
 ## Installation
 
@@ -65,21 +68,25 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 
 ## Usage
 
+### Generating Monthly Reports
+
+Pass one or more EJ files (a shell wildcard works, quote it so Ruby expands it), plus the two output paths:
+
+```bash
+bundle exec ruby bin/generate_monthly_orders_report.rb \
+  -o orders.csv -i items.csv "data/CASIO*/**/*.TXT"
+```
+
+Note that the input files are converted from Shift-JIS to UTF-8 **in place** before they are parsed. Run the script on a copy if you need to keep the original exports unchanged.
+
 ### Reading Receipt Files
 
 ```ruby
-require_relative 'lib/sr500_receipt_file'
+$LOAD_PATH.unshift 'lib'
+require 'sr500_receipt_file'
 
-# Read a receipt file
-receipt = SR500ReceiptFile.new('path/to/receipt.dat')
+receipt = SR500ReceiptFile.new('path/to/receipt.txt')
 receipt.parse
-```
-
-### Generating Monthly Reports
-
-```ruby
-# From the load-receipts directory
-ruby generate_monthly_orders_report.rb
 ```
 
 ## Data Format

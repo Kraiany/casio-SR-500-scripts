@@ -1,7 +1,6 @@
 require 'jp_encoding_file'
 require 'sr500_order'
 require 'sr500_constants'
-require 'debug'
 require_relative 'receipt_parser'
 require_relative 'sr500_order'
 
@@ -120,7 +119,7 @@ class SR500ReceiptFile < JPEncodingFile
     unless parsed_data.nil?             ||
            parsed_data[:date_time].nil? ||
            parsed_data[:items].empty?   ||
-           parsed_data[:tax] == 0
+           parsed_data[:tax_amount] == 0
 
       order = {
         timestamp:      parsed_data[:date_time].strftime("%Y-%m-%d %H:%M"),
@@ -143,7 +142,6 @@ class SR500ReceiptFile < JPEncodingFile
         cash:           parsed_data[:cash],
         taxableamount:  format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax_percent]),
       }
-#debugger
       drop_corrections parsed_data # Remove cancellations together
                                    # wich cancelled items from order
 

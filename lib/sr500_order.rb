@@ -1,4 +1,3 @@
-require 'debug'
 require 'csv'
 require 'sr500_constants'
 
