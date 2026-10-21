@@ -2,6 +2,7 @@
 
 - [Casio SR-500 Scripts](#casio-sr-500-scripts)
   * [Features](#features)
+  * [Scripts](#scripts)
   * [Project Structure](#project-structure)
   * [Requirements](#requirements)
   * [Installation](#installation)
@@ -27,6 +28,25 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 - Generate monthly reports and analytics
 - Export data to CSV format
 - Database integration for data storage and querying
+
+## Scripts
+
+All command-line scripts are in `bin/`. Run them as `ruby bin/<name>.rb`; `-h` shows the
+options. Details and examples are in [Usage](#usage).
+
+| Script | What it does | Input | Output |
+|---|---|---|---|
+| `generate_monthly_orders_report.rb` | Parses the electronic journal into one row per order and one per item | EJ text files (`XZ/EJ*.TXT`) | Orders CSV (`-o`) and items CSV (`-i`). **Converts the input files to UTF-8 in place** |
+| `extract_z_reports.rb` | Converts the register's own X/Z reports (totals, payments, departments, hourly and per-PLU sales) to CSV | Report CSVs (`XZ/YYYY/MM/*.CSV`) | Five CSV files in the `-d` directory |
+| `extract_settings.rb` | Exports all tables of the register's settings file (PLU, departments, keys, tax rates, ...) to CSV | `AUTOPGM/FILE092P.092` | 13 CSV files in the `-d` directory |
+| `extract_plu_settings.rb` | Exports only the PLU (product) list with prices and departments to CSV | `AUTOPGM/FILE092P.092` | One CSV (`-o`, or stdout) |
+| `open_recode_sjis_file.rb` | Converts Shift-JIS journal files to UTF-8 | EJ text files | The same files, **rewritten in place** |
+| `md2pdf.sh` | Renders a Markdown document to PDF with pandoc and XeLaTeX | A `.md` file | A `.pdf` next to it |
+
+Which one to use: take daily sales totals from `extract_z_reports.rb` (they are the register's
+official numbers), receipt-level detail from `generate_monthly_orders_report.rb`, and product
+prices and other register settings from `extract_settings.rb`. Everything except the two scripts
+marked "in place" only reads its input.
 
 ## Project Structure
 
