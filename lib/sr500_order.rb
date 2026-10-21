@@ -29,6 +29,21 @@ class SR500Order
 
   include SR500Constants
 
+  # Keys of all orders built so far. Exports are cumulative snapshots, so
+  # the same receipt is present in several of the files being processed.
+  @@keys = {}
+
+  def self.key(epoch, sequence)
+    "#{epoch.to_i}-#{sprintf("%06d", sequence)}"
+  end
+
+  # Returns true when the key is new and false when the receipt was already
+  # seen, in which case it must not be built again.
+  def self.register_key(key)
+    return false if @@keys.key?(key)
+    @@keys[key] = true
+  end
+
    [ :key, :timestamp, :date, :time, :hour, :sequence, :taxableamount, :taxincluded,
      :totalamountdue, :amountreceived, :change, :items,
      :tax_percent, :tax_amount, :cash
@@ -49,7 +64,7 @@ class SR500Order
      @hour           = order.delete :hour
      @sequence       = order.delete :number
 
-     @key            = "#{order[:epoch].to_i}-#{sprintf("%06d",@sequence)}"
+     @key            = SR500Order.key(order[:epoch], @sequence)
      @tax_percent    = order.delete :tax_percent
      @tax_amount     = order.delete :tax_amount
 
