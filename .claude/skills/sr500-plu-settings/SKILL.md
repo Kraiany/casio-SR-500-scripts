@@ -28,10 +28,14 @@ before decoding anything by hand.
      the `Price` column of the items CSV from `bin/generate_monthly_orders_report.rb` (49 of 49 match
      on the current data).
 5. **Other settings** (departments, function keys, staff, hourly slots, tax rates, receipt
-   lines, keyboard layout): there is no exporter, so read the table with the "Reading any table"
-   snippet in `FILE092P_092.md` (it parses all 24 tables and must end exactly at the end of the
-   file), then decode the records with the layout given for that table. Text is CP932; prices,
-   PLU codes, hours and tax rates are BCD.
+   lines, keyboard layout and the raw tables): export them all with
+   ```bash
+   ruby bin/extract_settings.rb -d settings "<path to FILE092P.092>"
+   ```
+   which writes 13 CSV files (including `plu.csv`; `-a` adds blank records). The files and
+   columns are listed in `FILE092P_092.md`. For a table the exporter does not decode, read it
+   with the "Reading any table" snippet there. Text is CP932; prices, PLU codes, hours and tax
+   rates are BCD.
 6. **If a current product list is needed**, do not use this file: it is from January 2025. Products
    added later (about 10 by the end of 2026) and their sales are in the daily PLU report. Run
    `ruby bin/extract_z_reports.rb -d reports "<export>/SR500_550_4000/XZ/20*/*/*.CSV"` and use
@@ -46,5 +50,5 @@ before decoding anything by hand.
 - The `Flags` value (`0x40` on 49 records), the tax-rate and keyboard-layout tables, and some
   tables are only partly understood; `FILE092P_092.md` marks each as confirmed, probable or unknown.
   Do not present the probable ones as facts.
-- Receipt message line 17 is the shop's address: do not copy it into committed files.
-- If the format needs to be changed in code, update `FILE092P_092.md` and `lib/sr500_plu_file.rb` together.
+- Receipt message line 17 is the shop's address (it is in `message_lines.csv`): do not commit the generated files or copy it into committed text.
+- If the format needs to be changed in code, update `FILE092P_092.md`, `lib/sr500_settings_file.rb` and `lib/sr500_plu_file.rb` together.
