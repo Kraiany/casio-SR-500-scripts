@@ -35,7 +35,8 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 ├── lib/                         # Core library files
 │   ├── sr500_receipt_file.rb    # Splits an EJ file into receipts
 │   ├── sr500_monthly_receipts.rb # Runs several EJ files as one batch
-│   ├── sr500_plu_file.rb        # Reader for the binary PLU settings file
+│   ├── sr500_settings_file.rb   # Reader for the binary settings file, exports all tables
+│   ├── sr500_plu_file.rb        # PLU list on top of the settings reader
 │   ├── sr500_report_file.rb     # Reader for one X/Z report CSV
 │   ├── sr500_report_set.rb      # Collects X/Z reports from many exports into CSV files
 │   ├── sr500_constants.rb       # Constants and configurations
@@ -45,6 +46,7 @@ A collection of Ruby scripts and utilities for working with Casio SR-500 POS reg
 ├── bin/                         # Command-line scripts
 │   ├── generate_monthly_orders_report.rb # Writes orders and items CSV files
 │   ├── extract_plu_settings.rb  # Writes the PLU settings of the register to CSV
+│   ├── extract_settings.rb      # Writes all tables of the settings file to CSV
 │   ├── extract_z_reports.rb     # Writes the X/Z reports of the register to CSV
 │   ├── open_recode_sjis_file.rb # Converts Shift-JIS files to UTF-8 in place
 │   └── md2pdf.sh                # Markdown to PDF (see README_PDF.md)
@@ -105,6 +107,20 @@ Columns are `PLU`, `Name`, `Price`, `Department`, `Department Name` and
 `Flags` (raw hex of five status bytes, meaning not decoded). Unused slots
 are skipped; pass `--all` to include all 2500. The file is only read, not
 modified.
+
+The same file holds the other register settings. To export all of its tables
+as CSV files (PLU list, departments, function and payment keys, groups,
+staff, hourly slots, tax rates, receipt message lines, keyboard layout and
+report/print labels, plus the undecoded tables as raw hex):
+
+```bash
+ruby bin/extract_settings.rb -d settings \
+  "data/CASIO-2026-02-01/SR500_550_4000/AUTOPGM/FILE092P.092"
+```
+
+Blank records are skipped unless `--all` is given. The receipt message lines
+contain the shop's address; the generated CSV files are git-ignored, do not
+commit them. The files are listed in [FILE092P_092.md](FILE092P_092.md).
 
 ### Extracting X/Z Reports
 
