@@ -6,10 +6,13 @@
   * [Requirements](#requirements)
   * [Installation](#installation)
   * [Usage](#usage)
-    + [Reading Receipt Files](#reading-receipt-files)
     + [Generating Monthly Reports](#generating-monthly-reports)
+    + [Extracting PLU Settings](#extracting-plu-settings)
+    + [Extracting X/Z Reports](#extracting-xz-reports)
+    + [Reading Receipt Files](#reading-receipt-files)
   * [Data Format](#data-format)
     + [Electronic Journal File Format](#electronic-journal-file-format)
+    + [PLU Settings File Format](#plu-settings-file-format)
   * [Documentation](#documentation)
     + [PDF generation](#pdf-generation)
   * [Contributing](#contributing)
@@ -149,6 +152,13 @@ The project works with Casio SR-500 POS register data files, which typically con
 
 File format with examples of different receipt type examples is
 described in the file [README_EJ_FORMAT.md](README_EJ_FORMAT.md)
+
+### PLU Settings File Format
+
+The binary settings file `AUTOPGM/FILE092P.092` (PLU list and prices, departments,
+function keys, tax rates, receipt lines) is described in
+[FILE092P_092.md](FILE092P_092.md), together with steps to extract the data. The same
+description is available to Claude Code as the project skill `sr500-plu-settings`.
 
 ## Documentation
 
