@@ -56,7 +56,7 @@ The pipeline, which spans several files:
 
 `lib/sr500_constants.rb` is the shared vocabulary: the Japanese labels, the timestamp regexes, the CSV `HEADERS`, and `Yen = '￥'`. Change parsing behavior there first.
 
-Data layout: `data/` holds raw EJ exports (one directory per export date). `orders.csv`, `items.csv` and `db/cafe_reports.db` at the root are generated/local artifacts; they are git-ignored patterns or large outputs, not sources.
+Data layout: `data/` is a **private git submodule** (`Kraiany/casio-SR-500-data`, see `.gitmodules`) that holds the raw exports (one directory per export date); it is not part of this public repo, never copy its contents (sales data, the shop's address in `message_lines`) into files committed here. Clone with `git clone --recurse-submodules`, or run `git submodule update --init`. Changes to data are committed inside `data/` and pushed to the data repo; the parent repo then commits the new submodule pointer. `orders.csv`, `items.csv` and `db/cafe_reports.db` at the root are generated/local artifacts; they are git-ignored patterns or large outputs, not sources.
 
 ## Format reference
 
@@ -64,6 +64,6 @@ Data layout: `data/` holds raw EJ exports (one directory per export date). `orde
 
 ## Gotchas
 
-- Input files are rewritten in place during parsing. Never point a run at the only copy of an export.
+- Input files are rewritten in place during parsing. `data/` is a git repo, so a run shows up in `git -C data status` and can be undone with `git -C data checkout -- .`; still prefer a copy.
 - `parse_returns` only reads a return amount when the following line contains `-`. Receipt headers such as `戻 <timestamp>` are followed by a receipt number, and parsing them used to crash. `returns` is parsed but never written to the CSVs.
 - Debugging: there is no `debug` gem or `debugger` call in the code now; add `require 'debug'` locally if you need a breakpoint.
