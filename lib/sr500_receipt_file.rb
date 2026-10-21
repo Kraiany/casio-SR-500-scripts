@@ -31,12 +31,20 @@ class SR500ReceiptFile < JPEncodingFile
   def parse
     @orders = []
     current_receipt_lines = []
+    in_report = false  # Inside a report block, after a separator line
 
     @lines.each_index do |index|
       line = @lines[index]
       # Skip empty lines
       line.strip!
       next if line.empty?
+
+      # A report block (X/Z reading, settlement) can be followed by more
+      # receipts. Skip it up to the next receipt header.
+      if in_report
+        next unless line.match(Timestamp)
+        in_report = false
+      end
 
       next_line = @lines[index+1]
 
@@ -85,7 +93,8 @@ class SR500ReceiptFile < JPEncodingFile
       if line.match(/^-{20,25}/)
         process_current_receipt(current_receipt_lines, @orders) if current_receipt_lines.any?
         current_receipt_lines = []
-        return
+        in_report = true
+        next
       end
 
       # Add line to current receipt
@@ -148,6 +157,9 @@ class SR500ReceiptFile < JPEncodingFile
         cash:           parsed_data[:cash],
         taxableamount:  format_taxable_amount(parsed_data[:subtotal], parsed_data[:tax_percent]),
       }
+      # The same receipt can be present in several files
+      return unless SR500Order.register_key(SR500Order.key(order[:epoch], order[:number]))
+
       drop_corrections parsed_data # Remove cancellations together
                                    # wich cancelled items from order
 

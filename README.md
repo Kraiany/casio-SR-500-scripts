@@ -84,6 +84,10 @@ bundle exec ruby bin/generate_monthly_orders_report.rb \
 
 Note that the input files are converted from Shift-JIS to UTF-8 **in place** before they are parsed. Run the script on a copy if you need to keep the original exports unchanged.
 
+Exports are cumulative snapshots, so the newest one contains every receipt of the older ones. Passing several exports is safe: a receipt that was already read (same time and receipt number) is skipped, and the result is the same as running on the newest export alone. Receipts paid in exact cash have no total line; their total is taken from the subtotal.
+
+The numbers can be checked against the register's own settlement reports (see "Extracting X/Z Reports"). On the current data the journal gives 5,657 orders and 19,476,968 yen against 5,648 orders and 19,318,329 yen in the Z reports; 495 of 505 settlement periods match to the yen. The difference is mostly the first settlement (2025-01-26), which does not cover the receipts the journal holds from before it.
+
 ### Extracting PLU Settings
 
 The register's PLU (product) settings are stored in a binary file,

@@ -21,7 +21,7 @@ class ReceiptParser
       subtotal:       subtotal[:amount],
       tax_amount:     parse_tax,
       tax_percent:    subtotal[:percent],
-      totalamountdue: parse_total,
+      totalamountdue: parse_total || subtotal[:amount],
       payments:       parse_payments,
       change:         parse_change,
       amountreceived: parse_received,
@@ -101,7 +101,7 @@ class ReceiptParser
         }
         current_line += 1
       else
-        next_line = @lines[current_line+1]
+        next_line = @lines[current_line+1].to_s
 
         if next_line.include?(Cancellation)      || #訂正
            next_line.include?(SharpSlashKae)     || #＃／替
@@ -117,6 +117,9 @@ class ReceiptParser
               type: 'sale'
             }
             current_line += 2
+          else
+            # Neither an item nor the first half of one, skip it
+            current_line += 1
           end
         end
       end
@@ -204,9 +207,11 @@ class ReceiptParser
     parse_price(price_str)
   end
 
+  # Receipts paid in exact cash have no total line, nil is returned for
+  # them and the caller uses the subtotal (対象計, which includes tax).
   def parse_total
     total_line = @lines.find { |line| line.include?(TotalAmountDue) }  # '合  計'
-    return 0 unless total_line
+    return nil unless total_line
 
     price_str = total_line.split(Yen).last.strip
     parse_price(price_str)
