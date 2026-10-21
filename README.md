@@ -82,9 +82,15 @@ marked "in place" only reads its input.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/casio-SR-500-scripts.git
+   git clone --recurse-submodules git@github.com:Kraiany/casio-SR-500-scripts.git
    cd casio-SR-500-scripts
    ```
+
+   The `data/` directory is a **private** submodule,
+   [casio-SR-500-data](https://github.com/Kraiany/casio-SR-500-data), with the raw exports of the
+   register (receipts, reports, settings). Without access to it the clone still works but `data/`
+   stays empty. If you cloned without `--recurse-submodules`, run
+   `git submodule update --init`.
 
 2. Install dependencies:
    ```bash
